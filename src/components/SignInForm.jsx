@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-nativ
 import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants'
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
@@ -21,11 +22,17 @@ export const SignInForm = () => {
       password: passwordValue
     };
     console.log('Cargando...')
-    console.log(apiUrl+'/auth/signin')
-    axios.post(apiUrl + '/auth/signin', data)
+    console.log(apiUrl + 'auth/signin')
+    axios.post(apiUrl + 'auth/signin', data)
       .then((res) => {
         console.log('Entramos');
         //console.log(JSON.stringify(res, null, 2));
+        AsyncStorage.setItem("token", res.data.token)
+          .then(() => console.log('Guardado en el storage'))
+          .catch(err => console.log(err))
+        AsyncStorage.setItem("user", JSON.stringify(res.data.user))
+          .then(() => console.log('Datos De usuario guardado'))
+          .catch(err => console.log(err))
       })
       .catch(err => {
         console.log(err);
