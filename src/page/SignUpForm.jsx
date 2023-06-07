@@ -1,11 +1,47 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, TextInput } from 'react-native'
+import Constants from 'expo-constants';
+import axios from 'axios';
+const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const SignUpForm = ({ navigation }) => {
+
+  const [name, setName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [photo, setPhoto] = useState('')
 
   const handlePressSignUp = () => {
     //navigation.navigate('SignUp')
     console.log('PIPO2')
+  }
+
+  const handleSignUp = () => {
+    console.log('Nombre:', name);
+    console.log('Correo electrónico:', email);
+    console.log('Contraseña:', password);
+    console.log('Foto:', photo);
+
+    let dataUserRegister = {
+      email: email,
+      name: name,
+      last_name: lastName,
+      password: password,
+      photo: photo,
+    };
+
+    console.log('Cargando...')
+    axios
+      .post(apiUrl + "auth/signup", dataUserRegister)
+      .then((res) => {
+        console.log('Registro exitoso')
+        navigation.navigate('Home')
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
   }
 
   return (
@@ -24,37 +60,37 @@ export const SignUpForm = ({ navigation }) => {
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
               placeholder="Name"
-            /* value={name}
-            onChangeText={setName} */
+              value={name}
+              onChangeText={setName}
             />
             <TextInput
               style={styles.input}
               placeholder="Last Name"
-            /* value={name}
-            onChangeText={setName} */
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-            /* value={email}
-            onChangeText={setEmail} */
+              value={lastName}
+              onChangeText={setLastName}
             />
             <TextInput
               style={styles.input}
               placeholder="Password"
               secureTextEntry
-            /* value={password}
-            onChangeText={setPassword} */
+              value={password}
+              onChangeText={setPassword}
             />
             <TextInput
               style={styles.input}
               placeholder="Photo"
-            /* value={photo}
-            onChangeText={setPhoto} */
+              value={photo}
+              onChangeText={setPhoto}
             />
             <View style={styles.backB}>
-              <TouchableOpacity style={styles.buttonContainer} /* onPress={handleSignUp} */>
+              <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>Sign Up</Text>
               </TouchableOpacity>
             </View>
