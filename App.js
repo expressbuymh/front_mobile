@@ -1,18 +1,29 @@
-import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { Home } from './src/page/Home';
+import { SignUpForm } from './src/page/SignUpForm';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Home } from './src/pages/Home'
-import { SignUpForm } from './src/pages/SignUpForm.jsx'
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator()
 
-export const App = () => {
+export default function App() {
   return (
+
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="SignUp" component={SignUpForm} />
+        <Stack.Screen name='Home' component={Home}/>
+        <Stack.Screen name='SignUp' component={SignUpForm}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

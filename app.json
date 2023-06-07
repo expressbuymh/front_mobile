@@ -3,6 +3,9 @@
     "name": "front-mobile",
     "slug": "front-mobile",
     "version": "1.0.0",
+    "extra": {
+      "apiUrl": "https://expressbuymh.onrender.com/"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
