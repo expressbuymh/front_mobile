@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
-export const SignInForm = () => {
+export const SignInForm = ({ navigation }) => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,16 +16,18 @@ export const SignInForm = () => {
     const emailValue = email;
     const passwordValue = password;
 
-
+    
     let data = {
       email: emailValue,
       password: passwordValue
     };
     console.log('Cargando...')
     console.log(apiUrl + 'auth/signin')
-    axios.post(apiUrl + 'auth/signin', data)
+    navigation.navigate('HomeProducts')
+    /* axios.post(apiUrl + 'auth/signin', data)
       .then((res) => {
         console.log('Entramos');
+        navigation.navigate('HomeProducts')
         //console.log(JSON.stringify(res, null, 2));
         AsyncStorage.setItem("token", res.data.token)
           .then(() => console.log('Guardado en el storage'))
@@ -37,7 +39,7 @@ export const SignInForm = () => {
       .catch(err => {
         console.log(err);
         console.log('No entramos');
-      });
+      }); */
   };
 
   return (
