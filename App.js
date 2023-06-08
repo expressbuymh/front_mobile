@@ -1,29 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Home } from './src/page/Home';
-import { SignUpForm } from './src/page/SignUpForm';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { Home } from './src/page/Home'
+import { SignUpForm } from './src/page/SignUpForm'
+import { HomeProducts } from './src/page/HomeProducts'
+import { NavBar } from './src/components/NavBar'
 
 const Stack = createStackNavigator()
 
-export default function App() {
+const App = () => {
   return (
-
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name='Home' component={Home}/>
-        <Stack.Screen name='SignUp' component={SignUpForm}/>
+      <Stack.Navigator
+        screenOptions={{
+          header: (props) => <NavBar {...props} />,
+        }}
+      >
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ header: undefined }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpForm}
+          options={{ header: undefined }}
+        />
+        <Stack.Screen
+          name="HomeProducts"
+          component={HomeProducts}
+          options={{ headerShown: true }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App

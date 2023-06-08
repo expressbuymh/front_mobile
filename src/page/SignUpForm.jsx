@@ -46,10 +46,10 @@ export const SignUpForm = ({ navigation }) => {
 
   return (
     <>
-      <Text>SignUpForm</Text>
+      {/* <Text>SignUpForm</Text>
       <TouchableOpacity style={styles.fullscreenButton} onPress={handlePressSignUp}>
         <Text style={styles.fullscreenButtonText} >Sign</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <View style={styles.container}>
         <ImageBackground
