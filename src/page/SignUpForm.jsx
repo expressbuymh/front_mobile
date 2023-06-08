@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 12,
     marginBottom: 10,
-    width: 270, // Ancho deseado
-    height: 0, // Alto deseado
+    width: 270, 
+    height: 0, 
     flex: 1,
     alignItems: 'center'
   },

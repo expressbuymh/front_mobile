@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList, } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export const NavBar = () => {
+export const NavBar = ( {navigation} ) => {
   const [isMenuExpanded, setMenuExpanded] = useState(false);
 
   const toggleMenu = () => {
@@ -13,24 +13,41 @@ export const NavBar = () => {
     setMenuExpanded(false);
   };
 
-  const menuItems = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6', 'Item 7', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8', 'Item 8',
+  const menuItems = [
+    { id: 1, title: 'Item 1' },
+    { id: 2, title: 'Item 2' },
+    { id: 3, title: 'Item 3' },
+    { id: 4, title: 'Item 4' },
+    { id: 5, title: 'Item 5' },
+    { id: 6, title: 'Item 6' },
+    { id: 7, title: 'Item 7' },
+    { id: 8, title: 'Item 8' },
+    { id: 9, title: 'Item 9' },
   ];
 
   const screenWidth = Dimensions.get('window').width;
   const menuWidth = screenWidth * 0.9;
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.item}>
-      <Text style={styles.itemText}>{item}</Text>
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => handleMenuItemPress(item.title)}
+    >
+      <Text style={styles.itemText}>{item.title}</Text>
       <View style={styles.itemSeparator} />
     </TouchableOpacity>
   );
+
+  const handleMenuItemPress = (title) => {
+    navigation.navigate('ProductsCategory')
+    console.log('Se hizo clic en el elemento:', title);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.container1}>
         <TouchableOpacity onPress={toggleMenu} style={styles.button}>
-          <Ionicons name={isMenuExpanded ? 'close' : 'menu'} size={24} color="white" />
+          <Ionicons name='menu' size={24} color="white" />
         </TouchableOpacity>
         <Image source={require('../../assets/favicon.png')} />
       </View>
@@ -45,7 +62,7 @@ export const NavBar = () => {
             <FlatList
               data={menuItems}
               renderItem={renderItem}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item) => item.id.toString()}
             />
           </View>
         </View>
@@ -120,4 +137,3 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0, 0, 0, 0.2)',
   },
 });
-
