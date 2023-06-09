@@ -23,11 +23,11 @@ export const ProductsCategory = () => {
         <View style={styles.imageContainer}>
           <Image style={styles.imgCard} source={{ uri: 'https://eldiariony.com/wp-content/uploads/sites/2/2022/10/semillas-de-manzana-shutterstock_1515666419.jpg?quality=75&strip=all&w=1200&h=800&crop=1' }} />
         </View>
-        <Text style={styles.titleCard}>{products.title}</Text>
+        <Text style={styles.titleCard}>{products?.title}</Text>
         <ScrollView style={styles.containDescription}>
-          <Text style={styles.textDescription}>{products.description}</Text>
+          <Text style={styles.textDescription}>{products?.description}</Text>
         </ScrollView>
-        <Text style={styles.textPrice}>{`$${products.price}`}</Text>
+        <Text style={styles.textPrice}>{`$${products?.price}`}</Text>
         <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
           <Text>Details</Text>
         </TouchableOpacity>
@@ -100,11 +100,11 @@ export const ProductsCategory = () => {
             <View style={styles.imageContainer}>
               <Image style={styles.imgCard} source={{ uri: 'https://eldiariony.com/wp-content/uploads/sites/2/2022/10/semillas-de-manzana-shutterstock_1515666419.jpg?quality=75&strip=all&w=1200&h=800&crop=1' }} />
             </View>
-            <Text style={styles.titleCard}>{detailDataProduct.title}</Text>
+            <Text style={styles.titleCard}>{detailDataProduct?.title}</Text>
             <ScrollView style={styles.containDescription}>
-              <Text style={styles.textDescription}>{detailDataProduct.description}</Text>
+              <Text style={styles.textDescription}>{detailDataProduct?.description}</Text>
             </ScrollView>
-            <Text style={styles.textPrice}>{`$${detailDataProduct.price}`}</Text>
+            <Text style={styles.textPrice}>{`$${detailDataProduct?.price}`}</Text>
             <TouchableOpacity style={styles.buttonCardCarts}>
               <MaterialIcons name='shopping-cart' size={20} color="black" />
               <Text>Add to Cart</Text>

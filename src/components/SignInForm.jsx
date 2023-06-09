@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants'
 import axios from 'axios';
@@ -16,7 +16,7 @@ export const SignInForm = ({ navigation }) => {
     const emailValue = email;
     const passwordValue = password;
 
-    
+
     let data = {
       email: emailValue,
       password: passwordValue
@@ -45,26 +45,29 @@ export const SignInForm = ({ navigation }) => {
   return (
 
     <View style={styles.container}>
+      <View style={styles.containLogo}>
+        <Image source={require('../../assets/favicon.png')} />
+      </View>
       <Text style={styles.textLabel}> Email address</Text>
       <View style={styles.inputContainer}>
-        <AntDesign name="user" size={24} color="white" style={styles.icon} />
+        <AntDesign name="user" size={24} color="black" style={styles.icon} />
         <TextInput
           value={email}
           onChangeText={setEmail}
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#ffffffea"
+          placeholderTextColor="lightgray"
         />
       </View>
       <Text style={styles.textLabel}> Password</Text>
       <View style={styles.inputContainer}>
-        <AntDesign name="lock" size={24} color="white" style={styles.icon} />
+        <AntDesign name="lock" size={24} color="black" style={styles.icon} />
         <TextInput
           value={password}
           onChangeText={setPassword}
           style={styles.input}
           placeholder="Password"
-          placeholderTextColor="#ffffffea"
+          placeholderTextColor="lightgray"
           secureTextEntry
         />
       </View>
@@ -77,17 +80,25 @@ export const SignInForm = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    justifyContent: 'center',
+  },
+  containLogo: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 10
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff1e',
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1,
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 8,
-    width: 270, // Ancho deseado
-    height: 40, // Alto deseado
+    width: 270,
+    height: 40,
   },
   icon: {
     marginLeft: 4,
@@ -97,7 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontFamily: 'System',
-    color: '#ffffffea',
+    color: 'rgba(13, 13, 125, 0.7)',
   },
   buttonContainer: {
     backgroundColor: 'rgba(13, 13, 125, 0.7)',
@@ -108,9 +119,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
   },
   textLabel: {
-    color: 'white'
+    color: 'black'
   }
 });
