@@ -24,7 +24,7 @@ export const SignInForm = ({ navigation }) => {
     console.log('Cargando...')
     console.log(apiUrl + 'auth/signin')
     navigation.navigate('HomeProducts')
-    /* axios.post(apiUrl + 'auth/signin', data)
+    axios.post(apiUrl + 'auth/signin', data)
       .then((res) => {
         console.log('Entramos');
         navigation.navigate('HomeProducts')
@@ -39,7 +39,7 @@ export const SignInForm = ({ navigation }) => {
       .catch(err => {
         console.log(err);
         console.log('No entramos');
-      }); */
+      });
   };
 
   return (

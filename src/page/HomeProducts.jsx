@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Animated, Dimensions, Image } from 'react-native'
 import Swiper from 'react-native-swiper'
 
 export const HomeProducts = () => {
@@ -12,12 +12,15 @@ export const HomeProducts = () => {
         <Swiper autoplay>
           <View style={styles.slide}>
             <Text style={styles.text}>Promo 1</Text>
+            <Image style={styles.img} source={{ uri: 'https://thumbs.dreamstime.com/b/concepto-para-un-cartel-publicitario-durante-las-promociones-una-tienda-de-bricolaje-publicidad-la-bandera-en-el-sector-diy-143733557.jpg' }} />
           </View>
           <View style={styles.slide}>
             <Text style={styles.text}>Promo 2</Text>
+            <Image style={styles.img} source={{ uri: 'https://thumbs.dreamstime.com/b/concepto-para-un-cartel-publicitario-durante-las-promociones-una-tienda-de-bricolaje-publicidad-la-bandera-en-el-sector-diy-143733557.jpg' }} />
           </View>
           <View style={styles.slide}>
             <Text style={styles.text}>Promo 3</Text>
+            <Image style={styles.img} source={{ uri: 'https://thumbs.dreamstime.com/b/concepto-para-un-cartel-publicitario-durante-las-promociones-una-tienda-de-bricolaje-publicidad-la-bandera-en-el-sector-diy-143733557.jpg' }} />
           </View>
         </Swiper>
       </View>
@@ -43,6 +46,10 @@ export const HomeProducts = () => {
           >
             <View style={styles.slide2}>
               <Text style={styles.text2}>Slide 1</Text>
+              <View style={styles.cardImg}>
+                <Image style={styles.img} source={{ uri: 'https://eldiariony.com/wp-content/uploads/sites/2/2022/10/semillas-de-manzana-shutterstock_1515666419.jpg?quality=75&strip=all&w=1200&h=800&crop=1' }} />
+              </View>
+              <Text style={styles.text2}>  Price: $30 </Text>
             </View>
             <View style={styles.slide2}>
               <Text style={styles.text2}>Slide 2</Text>
@@ -89,15 +96,14 @@ const styles = StyleSheet.create({
   containerProducts: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   containerSlider: {
     width: Dimensions.get('window').width,
-    height: 200,
+    height: '100%'
   },
   slide2: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'skyblue',
   },
@@ -106,4 +112,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  img: {
+    flex: 1,
+    width: '100%',
+    height: 20,
+  },
+  cardImg:{
+    height: '50%',
+    width: '50%'
+  }
 })
