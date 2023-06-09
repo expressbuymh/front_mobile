@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
 import { SignInForm } from '../components/SignInForm'
-import { NavBar } from '../components/NavBar'
+import { HomeProducts } from './HomeProducts'
 
 export const Home = ({ navigation }) => {
 
