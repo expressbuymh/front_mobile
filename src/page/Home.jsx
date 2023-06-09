@@ -13,14 +13,16 @@ export const Home = ({ navigation }) => {
 
   return (
     <>
-      
+
       <View style={styles.container}>
         <View style={styles.contentContainer}>
-          <Text>Home</Text>
           <SignInForm navigation={navigation} />
-          <TouchableOpacity style={styles.fullscreenButton} onPress={handlePressSignUp}>
-            <Text style={styles.fullscreenButtonText}>SignUp</Text>
-          </TouchableOpacity>
+          <View style={styles.containSignUp}>
+            <Text> You do not an account? </Text>
+            <TouchableOpacity onPress={handlePressSignUp}>
+              <Text style={styles.fullscreenButtonText}>SignUp</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </>
@@ -30,21 +32,22 @@ export const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: 'white',
+    borderColor: 'black',
+    borderStyle: 'solid',
+    borderWidth: 1,
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 100, // Ajusta el valor según sea necesario
+    paddingTop: 50, // CAMBIAR MAÑANA LA WEA 
   },
-  fullscreenButton: {
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    width: '70%',
+  containSignUp: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+    width: '65%'
   },
   fullscreenButtonText: {
     fontSize: 16,
