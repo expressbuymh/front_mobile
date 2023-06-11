@@ -12,11 +12,6 @@ export const SignUpForm = ({ navigation }) => {
   const [password, setPassword] = useState('')
   const [photo, setPhoto] = useState('')
 
-  const handlePressSignUp = () => {
-    //navigation.navigate('SignUp')
-    console.log('PIPO2')
-  }
-
   const handleSignUp = () => {
     console.log('Nombre:', name);
     console.log('Correo electrónico:', email);
@@ -46,14 +41,9 @@ export const SignUpForm = ({ navigation }) => {
 
   return (
     <>
-      {/* <Text>SignUpForm</Text>
-      <TouchableOpacity style={styles.fullscreenButton} onPress={handlePressSignUp}>
-        <Text style={styles.fullscreenButtonText} >Sign</Text>
-      </TouchableOpacity> */}
-
       <View style={styles.container}>
         <ImageBackground
-          /* source={require('../../assets/image/form.webp')} */
+          source={require('../../assets/forms.jpg')} 
           style={styles.background}
           imageStyle={styles.backgroundImage}
         >
@@ -107,7 +97,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
   },
   fullscreenButton: {
     backgroundColor: '#ffffff',

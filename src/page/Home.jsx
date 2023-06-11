@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, ImageBackground } from 'react-native'
 import { SignInForm } from '../components/SignInForm'
 import { HomeProducts } from './HomeProducts'
 
@@ -14,7 +14,10 @@ export const Home = ({ navigation }) => {
   return (
     <>
 
-      <View style={styles.container}>
+      <ImageBackground
+        style={styles.container}
+        source={require('../../assets/forms.jpg')}
+      >
         <View style={styles.contentContainer}>
           <SignInForm navigation={navigation} />
           <View style={styles.containSignUp}>
@@ -24,7 +27,7 @@ export const Home = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ImageBackground>
     </>
   )
 }
@@ -41,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 50, // CAMBIAR MAÑANA LA WEA 
+    backgroundColor: 'rgba(255,255,255, 0.6)'
   },
   containSignUp: {
     flexDirection: 'row',
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
   fullscreenButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'rgba(13, 13, 125, 0.7)',
     textAlign: 'center',
   },
 });
