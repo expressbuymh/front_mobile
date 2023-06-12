@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native'
+import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ImageBackground } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 export const ProductsCategory = () => {
@@ -79,9 +79,11 @@ export const ProductsCategory = () => {
 
   return (
     <>
-      <View style={styles.containerHeader}>
-        <Text style={styles.textHeader}>ProductsCategory</Text>
-      </View>
+      <ImageBackground source={require('../../assets/categories.jpg')} style={styles.containerHeader}>
+        <View style={styles.headerTextContent}>
+          <Text style={styles.textHeader}>ProductsCategory</Text>
+        </View>
+      </ImageBackground>
       <TouchableOpacity style={styles.buttonContainer}>
         <Ionicons name="filter" size={24} color="black" />
         <Text style={styles.buttonText}>Filter</Text>
@@ -126,9 +128,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerTextContent: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
   textHeader: {
     fontWeight: 'bold',
     fontSize: 30,
+    //color: 'white'
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -156,8 +167,11 @@ const styles = StyleSheet.create({
   card: {
     width: '48%',
     height: 500,
-    backgroundColor: 'lightgray',
     alignItems: 'center',
+    borderColor: 'rgba(200, 200, 200, 0.7)',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 5
   },
   imageContainer: {
     width: '90%',

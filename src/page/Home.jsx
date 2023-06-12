@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   fullscreenButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'rgba(13, 13, 125, 0.7)',
+    color: '#4F46E5',
     textAlign: 'center',
   },
 });
