@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   backB: {
-    backgroundColor: 'rgba(0, 170, 50, 0.7)',
+    backgroundColor: '#4F46E5',
     textAlign: 'center',
     height: 50,
     borderRadius: 10,

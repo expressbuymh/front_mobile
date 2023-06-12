@@ -114,15 +114,14 @@ export const NavBar = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+      <View style={styles.itemSeparator} />
 
       <Modal visible={isMenuExpanded} animationType="slide" transparent={true}>
         <View style={styles.overlay}>
-          <View style={styles.closeContainer}>
-            <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.menu, { width: menuWidth }]}>
+          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <View style={styles.menu}>
             <FlatList
               data={menuItems}
               renderItem={renderItem}
@@ -134,12 +133,10 @@ export const NavBar = ({ navigation }) => {
 
       <Modal visible={isUserExpanded} animationType="slide" transparent={true}>
         <View style={styles.overlay}>
-          <View style={styles.closeContainer}>
-            <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.menu, { width: menuWidth }]}>
+          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <View style={styles.menu}>
             <TouchableOpacity style={styles.item} onPress={signOut}>
               <Text style={styles.itemText}>Profile</Text>
               <View style={styles.itemSeparator} />
@@ -152,12 +149,10 @@ export const NavBar = ({ navigation }) => {
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
         <View style={styles.overlay}>
-          <View style={styles.closeContainer}>
-            <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.menu, { width: menuWidth }]}>
+          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <View style={styles.menu}>
             <FlatList
               data={menuItems}
               renderItem={renderItem}
@@ -175,7 +170,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: 100,
-    backgroundColor: 'rgba(100, 10, 50, 1)',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
     zIndex: 1,
   },
   container1: {
@@ -185,11 +180,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(100, 10, 50, 1)',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
     paddingTop: 25,
   },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: 'rgba(13, 13, 125, 0.7)',
     padding: 10,
     borderRadius: 5,
   },
@@ -201,24 +196,20 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingTop: 50,
-    paddingLeft: 10,
   },
   menu: {
+    flexDirection: 'column',
+    width: '100%',
     backgroundColor: 'white',
     padding: 10,
-    borderRadius: 5,
     flex: 1,
-  },
-  closeContainer: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
   },
   closeButton: {
     padding: 10,
-    borderRadius: 5,
     backgroundColor: 'white',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
   },
   item: {
     flexDirection: 'column',
