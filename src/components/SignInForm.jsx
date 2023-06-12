@@ -23,7 +23,7 @@ export const SignInForm = ({ navigation }) => {
     };
     console.log('Cargando...')
     console.log(apiUrl + 'auth/signin')
-    navigation.navigate('HomeProducts')
+    //navigation.navigate('HomeProducts')
     axios.post(apiUrl + 'auth/signin', data)
       .then((res) => {
         console.log('Entramos');
@@ -34,6 +34,9 @@ export const SignInForm = ({ navigation }) => {
           .catch(err => console.log(err))
         AsyncStorage.setItem("user", JSON.stringify(res.data.user))
           .then(() => console.log('Datos De usuario guardado'))
+          .catch(err => console.log(err))
+        AsyncStorage.setItem("cart", JSON.stringify(res.data.cart))
+          .then(() => console.log('Datos Del carrito guardado'))
           .catch(err => console.log(err))
       })
       .catch(err => {
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
   },
   textLabel: {
     color: 'black'
