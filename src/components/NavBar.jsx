@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { ModalCart } from './ModalCart'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -148,20 +149,8 @@ export const NavBar = ({ navigation }) => {
       </Modal>
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
-        <View style={styles.overlay}>
-          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
-          <View style={styles.menu}>
-            <FlatList
-              data={menuItems}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
-            />
-          </View>
-        </View>
+        <ModalCart setCartExpanded={setCartExpanded}/>
       </Modal>
-
     </View>
   )
 }
