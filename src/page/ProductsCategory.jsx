@@ -1,29 +1,75 @@
-import React, { useState } from 'react'
-import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ImageBackground } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ImageBackground, FlatList } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import axios from 'axios'
+import Constants from 'expo-constants'
+const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
-export const ProductsCategory = () => {
+export const ProductsCategory = ({ route }) => {
 
   const [detailDataProduct, setDetailProdct] = useState()
   const [isExpanded, setExpanded] = useState(false)
+  const [isFilterExpanded, setFilter] = useState(false)
+  const [subCategories, setSubCategories] = useState()
+  const [dataProducts, setDataProducts] = useState([])
 
-  const data = [
-    { id: 1, title: 'Tarjeta 1', description: "descripcion del procucto", price: 100 },
-    { id: 2, title: 'Tarjeta 2', description: "descripcion del procucto", price: 100 },
-    { id: 3, title: 'Tarjeta 3', description: "descripcion del procucto", price: 100 },
-    { id: 4, title: 'Tarjeta 4', description: "descripcion del procucto", price: 100 },
-    { id: 5, title: 'Tarjeta 5', description: "descripcion del procucto", price: 100 },
-    { id: 6, title: 'Tarjeta 6', description: "descripcion del procucto", price: 100 },
-    { id: 7, title: 'Tarjeta 7', description: "descripcion del procucto", price: 100 },
-  ];
+  const menuItems = [
+    { id: 1, title: 'Item 1' },
+    { id: 2, title: 'Item 2' },
+    { id: 3, title: 'Item 3' },
+    { id: 4, title: 'Item 4' },
+    { id: 5, title: 'Item 5' },
+    { id: 6, title: 'Item 6' },
+    { id: 7, title: 'Item 7' },
+    { id: 8, title: 'Item 8' },
+    { id: 9, title: 'Item 9' },
+  ]
+
+  const filterNonPrintableChars = (str) => {
+    return str.replace(/[^\x20-\x7E]/g, '');
+  }
+
+  useEffect(
+    () => {
+      axios.get(apiUrl + 'menu')
+        .then(res => {
+          /* let subCategories = res.data.subcategories
+          const filterSubCategory = subCategories.filter(item => item._id == route.params.category_id)
+          console.log('PIPO', filterNonPrintableChars(subCategories[0]._id) === filterNonPrintableChars(route.params.category_id));
+          console.log('PIPO', subCategories[0]._id.split('').map(c => c.charCodeAt(0)));
+          console.log('PIPO', route.params.category_id.split('').map(c => c.charCodeAt(0)));
+          console.log('PIPO', route.params.category_id, subCategories[0]._id);
+          console.log('filtro', filterSubCategory) */
+          setSubCategories(res.data.subcategories)
+        })
+        .catch(err => console.log(err))
+      console.log(route.params.category_id)
+      axios.get(apiUrl + `products?category_id=${route.params.category_id}`)
+        .then(res => {
+          //console.log(res.data.products)
+          setDataProducts(res.data.products)
+        })
+        .catch(err => console.log(err))
+    }, []
+  )
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => handleMenuItemPress(item._id)}
+    >
+      <Text style={styles.itemText}>{item.name}</Text>
+      <View style={styles.itemSeparator} />
+    </TouchableOpacity>
+  )
 
   const Card = ({ products }) => {
     return (
       <View style={styles.card}>
         <View style={styles.imageContainer}>
-          <Image style={styles.imgCard} source={{ uri: 'https://eldiariony.com/wp-content/uploads/sites/2/2022/10/semillas-de-manzana-shutterstock_1515666419.jpg?quality=75&strip=all&w=1200&h=800&crop=1' }} />
+          <Image style={styles.imgCard} source={{ uri: `${products?.photo}` }} />
         </View>
-        <Text style={styles.titleCard}>{products?.title}</Text>
+        <Text style={styles.titleCard}>{products?.name}</Text>
         <ScrollView style={styles.containDescription}>
           <Text style={styles.textDescription}>{products?.description}</Text>
         </ScrollView>
@@ -32,8 +78,8 @@ export const ProductsCategory = () => {
           <Text>Details</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonCardCarts}>
-          <MaterialIcons name='shopping-cart' size={20} color="black" />
-          <Text>Add to Cart</Text>
+          <MaterialIcons name='shopping-cart' size={20} color="white" />
+          <Text style={styles.textButtonAddCart}>Add to Cart</Text>
         </TouchableOpacity>
       </View>
     )
@@ -45,13 +91,18 @@ export const ProductsCategory = () => {
     setExpanded(true)
   }
 
+  const toggleFilter = () => {
+    setFilter(true)
+  }
+
   const closeDetail = () => {
     setExpanded(false)
+    setFilter(false)
   }
 
   const generateCardPairs = () => {
     const cardPairs = [];
-    const dataPairs = data.length % 2 === 0 ? data : data.slice(0, data.length - 1); // Obtener un nuevo array con pares de datos
+    const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1); // Obtener un nuevo array con pares de datos
 
     for (let i = 0; i < dataPairs.length; i += 2) {
       const card1 = dataPairs[i];
@@ -65,10 +116,10 @@ export const ProductsCategory = () => {
     }
 
     // Agregar tarjeta individual para el último elemento si la longitud de data es impar
-    if (data.length % 2 !== 0) {
-      const lastCard = data[data.length - 1];
+    if (dataProducts.length % 2 !== 0) {
+      const lastCard = dataProducts[dataProducts.length - 1];
       cardPairs.push(
-        <View key={data.length} style={styles.row}>
+        <View key={dataProducts.length} style={styles.row}>
           <Card products={lastCard} />
         </View>
       );
@@ -84,10 +135,25 @@ export const ProductsCategory = () => {
           <Text style={styles.textHeader}>ProductsCategory</Text>
         </View>
       </ImageBackground>
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={toggleFilter}>
         <Ionicons name="filter" size={24} color="black" />
         <Text style={styles.buttonText}>Filter</Text>
       </TouchableOpacity>
+
+      <Modal visible={isFilterExpanded} animationType="slide" transparent={true}>
+        <View style={styles.overlayFilter}>
+          <TouchableOpacity onPress={closeDetail} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <View style={styles.contentFilter}>
+            <FlatList
+              data={subCategories}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id.toString()}
+            />
+          </View>
+        </View>
+      </Modal>
 
       <ScrollView contentContainerStyle={styles.container}>
         {generateCardPairs()}
@@ -100,9 +166,9 @@ export const ProductsCategory = () => {
         <View style={styles.overlay}>
           <View style={styles.cardDetail}>
             <View style={styles.imageContainer}>
-              <Image style={styles.imgCard} source={{ uri: 'https://eldiariony.com/wp-content/uploads/sites/2/2022/10/semillas-de-manzana-shutterstock_1515666419.jpg?quality=75&strip=all&w=1200&h=800&crop=1' }} />
+              <Image style={styles.imgCard} source={{ uri: `${detailDataProduct?.photo}` }} />
             </View>
-            <Text style={styles.titleCard}>{detailDataProduct?.title}</Text>
+            <Text style={styles.titleCard}>{detailDataProduct?.name}</Text>
             <ScrollView style={styles.containDescription}>
               <Text style={styles.textDescription}>{detailDataProduct?.description}</Text>
             </ScrollView>
@@ -139,7 +205,6 @@ const styles = StyleSheet.create({
   textHeader: {
     fontWeight: 'bold',
     fontSize: 30,
-    //color: 'white'
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -203,7 +268,7 @@ const styles = StyleSheet.create({
   buttonCardCarts: {
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,164, 32, 0.7)',
+    backgroundColor: '#4F46E5',
     borderRadius: 5,
     paddingVertical: 12,
     alignItems: 'center',
@@ -215,7 +280,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   titleCard: {
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
     color: 'rgba(70, 70, 70, 1)',
     padding: 6
@@ -254,8 +319,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     width: '100%',
-    height: 600,
+    height: 400,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  contentFilter: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    width: '80%'
+  },
+  overlayFilter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  item: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  itemText: {
+    marginLeft: 10,
+    fontSize: 18,
+  },
+  textButtonAddCart: {
+    color: 'white'
   }
 });

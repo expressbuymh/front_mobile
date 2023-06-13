@@ -14,10 +14,7 @@ export const Home = ({ navigation }) => {
   return (
     <>
 
-      <ImageBackground
-        style={styles.container}
-        source={require('../../assets/forms.jpg')}
-      >
+      <View style={styles.container}>
         <View style={styles.contentContainer}>
           <SignInForm navigation={navigation} />
           <View style={styles.containSignUp}>
@@ -27,7 +24,7 @@ export const Home = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </ImageBackground>
+      </View>
     </>
   )
 }

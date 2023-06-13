@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
@@ -49,7 +49,7 @@ export const ModalCart = ({ setCartExpanded }) => {
     const fetchData = async () => {
       const cartData = await fetchCartData();
       const headers = await getHeaders();
-      console.log('cart Data', cartData?.products[0].product_id.name);
+      //console.log('cart Data', cartData?.products[0].product_id.photo);
       setCartData(cartData?.products)
     }
     fetchData();
@@ -75,6 +75,7 @@ export const ModalCart = ({ setCartExpanded }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
+      <Image style={styles.imgCart} source={{ uri: `${item.photo}` }}/>
       <Text>{item.product_id.name}</Text>
       <TouchableOpacity onPress={() => removeItemFromCart(item)}>
         <Ionicons name="trash" size={24} color="black" />
@@ -92,8 +93,7 @@ export const ModalCart = ({ setCartExpanded }) => {
         <View style={styles.container}>
           <Text style={styles.title}>Carrito de compra</Text>
           <TouchableOpacity style={styles.addButton} onPress={() => addItemToCart({ id: Date.now(), name: 'Producto' })}>
-            <Ionicons name="add" size={24} color="white" />
-            <Text style={styles.addButtonText}>Agregar al carrito</Text>
+            <Text style={styles.addButtonText}>Empty cart</Text>
           </TouchableOpacity>
           <FlatList
             data={cartData}
@@ -134,9 +134,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   container: {
-    flex: 1,
+    flexDirection: 'column',
     padding: 16,
     backgroundColor: '#f5f5f5',
+    width: '100%'
   },
   title: {
     fontSize: 24,
@@ -146,14 +147,15 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'blue',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(250, 227, 226, 1)',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
     marginBottom: 16,
   },
   addButtonText: {
-    color: 'white',
+    color: 'rgba(255, 0, 0, 0.5)',
     fontSize: 16,
     marginLeft: 8,
   },
@@ -168,5 +170,10 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 8,
+  },
+  imgCart: {
+    width: '10%',
+    height: '55%',
+    resizeMode: 'cover',
   },
 })

@@ -50,21 +50,18 @@ export const SignInForm = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.containLogo}>
         <Image source={require('../../assets/favicon.png')} />
+        <Text style={styles.textLogo}> Sing in to your account </Text>
       </View>
-      <Text style={styles.textLabel}> Email address</Text>
       <View style={styles.inputContainer}>
-        <AntDesign name="user" size={24} color="black" style={styles.icon} />
         <TextInput
           value={email}
           onChangeText={setEmail}
           style={styles.input}
-          placeholder="Email"
+          placeholder="Email address"
           placeholderTextColor="lightgray"
         />
       </View>
-      <Text style={styles.textLabel}> Password</Text>
       <View style={styles.inputContainer}>
-        <AntDesign name="lock" size={24} color="black" style={styles.icon} />
         <TextInput
           value={password}
           onChangeText={setPassword}
@@ -83,11 +80,14 @@ export const SignInForm = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center'
   },
   containLogo: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 10
   },
   inputContainer: {
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     width: 270,
     height: 40,
+    marginVertical: 5
   },
   icon: {
     marginLeft: 4,
@@ -118,6 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 12,
     alignItems: 'center',
+    width: 270
   },
   buttonText: {
     fontSize: 18,
@@ -126,5 +128,11 @@ const styles = StyleSheet.create({
   },
   textLabel: {
     color: 'black'
+  },
+  textLogo: {
+    fontWeight: 'bold',
+    color: '#111827',
+    fontSize: 25,
+    paddingVertical: 15
   }
 });
