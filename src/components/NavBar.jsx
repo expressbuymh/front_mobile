@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { ModalCart } from './ModalCart'
@@ -11,6 +11,7 @@ export const NavBar = ({ navigation }) => {
   const [isMenuExpanded, setMenuExpanded] = useState(false)
   const [isUserExpanded, setUserExpanded] = useState(false)
   const [isCartExpanded, setCartExpanded] = useState(false)
+  const [categories, setCategories] = useState()
 
   const toggleMenu = () => {
     setMenuExpanded(!isMenuExpanded);
@@ -67,34 +68,35 @@ export const NavBar = ({ navigation }) => {
       .catch(err => alert(err))
   }
 
-  const menuItems = [
-    { id: 1, title: 'Item 1' },
-    { id: 2, title: 'Item 2' },
-    { id: 3, title: 'Item 3' },
-    { id: 4, title: 'Item 4' },
-    { id: 5, title: 'Item 5' },
-    { id: 6, title: 'Item 6' },
-    { id: 7, title: 'Item 7' },
-    { id: 8, title: 'Item 8' },
-    { id: 9, title: 'Item 9' },
-  ]
-
-  const screenWidth = Dimensions.get('window').width;
-  const menuWidth = screenWidth * 0.9;
+  useEffect(
+    () => {
+      axios.get(apiUrl + 'categories?department_id=&name=')
+        .then(res => {
+          //console.log(JSON.stringify(res, null, 2))
+          setCategories(res.data.categories)
+        })
+        .catch(err => console.log(err))
+    }, []
+  )
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.item}
-      onPress={() => handleMenuItemPress(item.title)}
+      onPress={() => handleMenuItemPress(item._id)}
     >
-      <Text style={styles.itemText}>{item.title}</Text>
+      <Text style={styles.itemText}>{item.name}</Text>
       <View style={styles.itemSeparator} />
     </TouchableOpacity>
   )
 
-  const handleMenuItemPress = (title) => {
-    navigation.navigate('ProductsCategory')
-    console.log('Se hizo clic en el elemento:', title);
+  const handleMenuItemPress = (category_id) => {
+    navigation.navigate('ProductsCategory', { category_id })
+    console.log('Se hizo clic en el elemento:', category_id);
+  }
+
+  const returnHome = () => {
+    setMenuExpanded(false)
+    navigation.navigate('HomeProducts')
   }
 
   return (
@@ -123,24 +125,29 @@ export const NavBar = ({ navigation }) => {
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
           <View style={styles.menu}>
+            <TouchableOpacity onPress={returnHome} style={styles.buttonContainer}>
+              <Text style={styles.buttonText}>Home</Text>
+            </TouchableOpacity>
             <FlatList
-              data={menuItems}
+              data={categories}
               renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => item._id.toString()}
             />
           </View>
         </View>
       </Modal>
 
       <Modal visible={isUserExpanded} animationType="slide" transparent={true}>
-        <View style={styles.overlay}>
-          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+        <View style={styles.overlayUser}>
+          <TouchableOpacity onPress={closeMenu} style={styles.closeButtonUser}>
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
-          <View style={styles.menu}>
+          <View style={styles.menuUser}>
             <TouchableOpacity style={styles.item} onPress={signOut}>
               <Text style={styles.itemText}>Profile</Text>
               <View style={styles.itemSeparator} />
+            </TouchableOpacity>
+            <TouchableOpacity>
               <Text style={styles.itemText}>Sign Out</Text>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
@@ -149,7 +156,7 @@ export const NavBar = ({ navigation }) => {
       </Modal>
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
-        <ModalCart setCartExpanded={setCartExpanded}/>
+        <ModalCart setCartExpanded={setCartExpanded} />
       </Modal>
     </View>
   )
@@ -186,6 +193,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  overlayUser: {
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    height: 120
+  },
   menu: {
     flexDirection: 'column',
     width: '100%',
@@ -193,10 +206,25 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
+  menuUser: {
+    flexDirection: 'column',
+    width: '50%',
+    //height: 150,
+    backgroundColor: 'white',
+    padding: 10,
+    flex:1
+  },
   closeButton: {
     padding: 10,
     backgroundColor: 'white',
     width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end'
+  },
+  closeButtonUser: {
+    padding: 10,
+    backgroundColor: 'white',
+    width: '50%',
     flexDirection: 'row',
     justifyContent: 'flex-end'
   },
@@ -224,5 +252,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginLeft: 4
+  },
+  buttonContainer: {
+    backgroundColor: '#4F46E5',
+    borderRadius: 5,
+    paddingVertical: 12,
+    marginBottom: 20,
+    alignItems: 'center',
+    width: 270
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
 })
