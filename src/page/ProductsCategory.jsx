@@ -2,28 +2,53 @@ import React, { useEffect, useState } from 'react'
 import { View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ImageBackground, FlatList } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants'
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const ProductsCategory = ({ route }) => {
-
+  const data = useSelector((state) => state.cart.cart)
+  const cartData = useSelector(state => state.cart.items)
+  let cartDataId = data._id
+  const dispatch = useDispatch()
   const [detailDataProduct, setDetailProdct] = useState()
   const [isExpanded, setExpanded] = useState(false)
   const [isFilterExpanded, setFilter] = useState(false)
   const [subCategories, setSubCategories] = useState()
   const [dataProducts, setDataProducts] = useState([])
+  const [headers, setHeaders] = useState()
 
-  const menuItems = [
-    { id: 1, title: 'Item 1' },
-    { id: 2, title: 'Item 2' },
-    { id: 3, title: 'Item 3' },
-    { id: 4, title: 'Item 4' },
-    { id: 5, title: 'Item 5' },
-    { id: 6, title: 'Item 6' },
-    { id: 7, title: 'Item 7' },
-    { id: 8, title: 'Item 8' },
-    { id: 9, title: 'Item 9' },
-  ]
+  let getToken = async () => {
+    try {
+      let token = await AsyncStorage.getItem('token');
+      return token;
+    } catch (error) {
+      console.log('Error al obtener el token:', error);
+      return null;
+    }
+  }
+
+  let getHeaders = async () => {
+    try {
+      let token = await getToken();
+      let headers = { headers: { 'Authorization': `Bearer ${token}` } };
+      return headers;
+    } catch (error) {
+      console.log('Error al obtener las headers:', error);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const headers = await getHeaders();
+      //console.log('cart Data', cartData?.products[0].product_id.photo);
+      setHeaders(headers)
+    }
+    fetchData();
+  }, []);
 
   const filterNonPrintableChars = (str) => {
     return str.replace(/[^\x20-\x7E]/g, '');
@@ -77,7 +102,7 @@ export const ProductsCategory = ({ route }) => {
         <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
           <Text>Details</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonCardCarts}>
+        <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
           <MaterialIcons name='shopping-cart' size={20} color="white" />
           <Text style={styles.textButtonAddCart}>Add to Cart</Text>
         </TouchableOpacity>
@@ -101,18 +126,18 @@ export const ProductsCategory = ({ route }) => {
   }
 
   const generateCardPairs = () => {
-    const cardPairs = [];
-    const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1); // Obtener un nuevo array con pares de datos
+    const cardPairs = []
+    const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1) // Obtener un nuevo array con pares de datos
 
     for (let i = 0; i < dataPairs.length; i += 2) {
-      const card1 = dataPairs[i];
-      const card2 = dataPairs[i + 1];
+      const card1 = dataPairs[i]
+      const card2 = dataPairs[i + 1]
       cardPairs.push(
         <View key={i} style={styles.row}>
           <Card products={card1} />
           {card2 && <Card products={card2} />}
         </View>
-      );
+      )
     }
 
     // Agregar tarjeta individual para el último elemento si la longitud de data es impar
@@ -122,11 +147,49 @@ export const ProductsCategory = ({ route }) => {
         <View key={dataProducts.length} style={styles.row}>
           <Card products={lastCard} />
         </View>
-      );
+      )
     }
 
     return cardPairs;
-  };
+  }
+
+  const addProduct = (product) => {
+    let data = {
+      product_id: product._id,
+      quantity: 1
+    }
+    let dataProduct = {
+      product_id: {
+        _id: product._id,
+        name: product.name,
+        photo: product.photo,
+        price: product.price
+      },
+      quantity: 1
+    }
+
+    const existingProduct = cartData.find(item => item.product_id._id === product._id)
+    if (existingProduct) {
+      data.quantity = existingProduct.quantity + 1
+      dataProduct.quantity = data.quantity
+
+      axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log(res)
+          dispatch(updateCartItemMas(dataProduct))
+        })
+        .catch(err => console.log(err))
+    } else {
+
+      axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log(res)
+          dispatch(addToCart([dataProduct]))
+        })
+        .catch(err => console.log(err))
+    }
+  }
+
 
   return (
     <>
@@ -173,9 +236,9 @@ export const ProductsCategory = ({ route }) => {
               <Text style={styles.textDescription}>{detailDataProduct?.description}</Text>
             </ScrollView>
             <Text style={styles.textPrice}>{`$${detailDataProduct?.price}`}</Text>
-            <TouchableOpacity style={styles.buttonCardCarts}>
+            <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(detailDataProduct)}>
               <MaterialIcons name='shopping-cart' size={20} color="black" />
-              <Text>Add to Cart</Text>
+              <Text style={styles.textButtonAddCart}>Add to Cart</Text>
             </TouchableOpacity>
           </View>
         </View>
