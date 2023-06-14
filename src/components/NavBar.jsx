@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList } from 'react-native'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList, Alert } from 'react-native'
+import { Ionicons, MaterialIcons, AntDesign, Entypo } from '@expo/vector-icons'
 import { ModalCart } from './ModalCart'
 import axios from 'axios'
 import Constants from 'expo-constants'
@@ -12,6 +12,9 @@ export const NavBar = ({ navigation }) => {
   const [isUserExpanded, setUserExpanded] = useState(false)
   const [isCartExpanded, setCartExpanded] = useState(false)
   const [categories, setCategories] = useState()
+  const goHome = () => {
+    navigation.navigate('Home')
+  }
 
   const toggleMenu = () => {
     setMenuExpanded(!isMenuExpanded);
@@ -82,15 +85,15 @@ export const NavBar = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.item}
-      onPress={() => handleMenuItemPress(item._id)}
+      onPress={() => handleMenuItemPress(item._id, item.name)}
     >
-      <Text style={styles.itemText}>{item.name}</Text>
+      <Text style={styles.itemText}>◾  {item.name}</Text>
       <View style={styles.itemSeparator} />
     </TouchableOpacity>
   )
 
-  const handleMenuItemPress = (category_id) => {
-    navigation.navigate('ProductsCategory', { category_id })
+  const handleMenuItemPress = (category_id, category_name) => {
+    navigation.navigate('ProductsCategory', { category_id, category_name })
     console.log('Se hizo clic en el elemento:', category_id);
   }
 
@@ -126,13 +129,35 @@ export const NavBar = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.menu}>
             <TouchableOpacity onPress={returnHome} style={styles.buttonContainer}>
+              <MaterialIcons name='home' size={35} color="white" />
               <Text style={styles.buttonText}>Home</Text>
             </TouchableOpacity>
-            <FlatList
-              data={categories}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id.toString()}
-            />
+            <Text style={{ marginTop: 10, marginBottom: 30, fontSize: 28, fontWeight: 'bold' }}>Categories</Text>
+            <View>
+              <FlatList
+                data={categories}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id.toString()}
+              />
+            </View>
+            <View style={{ marginTop: 30 }}>
+              <View style={{ flexDirection: 'row', columnGap: 12, alignItems: 'center', borderBottomWidth: 1, paddingBottom: 12 }}>
+                <AntDesign name="customerservice" size={30} color='#4F46E5' />
+                <View>
+                  <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Custom Service</Text>
+                  <Text>Resolve your doubts and make suggestions</Text>
+                </View>
+              </View>
+            </View>
+            <View style={{ marginTop: 30 }}>
+              <View style={{ flexDirection: 'row', columnGap: 12, alignItems: 'center', borderBottomWidth: 1, paddingBottom: 12 }}>
+              <Entypo name="tools" size={30} color='#4F46E5' />
+                <View>
+                  <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Suport Service</Text>
+                  <Text>Technical support for your products</Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </Modal>
@@ -143,13 +168,28 @@ export const NavBar = ({ navigation }) => {
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
           <View style={styles.menuUser}>
-            <TouchableOpacity style={styles.item} >
-              <Text style={styles.itemText}>Profile</Text>
+            <TouchableOpacity style={styles.item} onPress={signOut}>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <AntDesign name="user" size={24} color="black" />
+                <Text style={styles.itemText}>Profile</Text>
+              </View>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={signOut}>
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> { Alert.alert('LogOut', 'Are you sure?', [
+              {
+                text: 'Yes',
+                onPress: () => {
+                  console.log('Yes pressed')
+                  goHome()
+              }
+              },
+              {
+                text: 'Cancel',
+                onPress: () => {console.log('Cancel pressed')}
+              }
+            ]) }}>
+              <Entypo name="log-out" size={24} color="black"/>
               <Text style={styles.itemText}>Sign Out</Text>
-              <View style={styles.itemSeparator} />
             </TouchableOpacity>
           </View>
         </View>
@@ -189,15 +229,15 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   overlayUser: {
     flexDirection: 'column',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    height: 120
+    height: 160,
   },
   menu: {
     flexDirection: 'column',
@@ -209,10 +249,13 @@ const styles = StyleSheet.create({
   menuUser: {
     flexDirection: 'column',
     width: '50%',
-    //height: 150,
+    height: 150,
     backgroundColor: 'white',
     padding: 10,
-    flex:1
+    flex: 1,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#fff55'
   },
   closeButton: {
     padding: 10,
@@ -256,10 +299,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: '#4F46E5',
     borderRadius: 5,
-    paddingVertical: 12,
+    paddingVertical: 6,
     marginBottom: 20,
+    flexDirection: 'row',
     alignItems: 'center',
-    width: 270
+    justifyContent: 'center',
+    gap: 8,
+    width: 220,
+    alignSelf: 'center'
   },
   buttonText: {
     fontSize: 18,
