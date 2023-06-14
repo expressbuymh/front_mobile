@@ -5,10 +5,12 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { RadioButton } from 'react-native-paper'
+import { emptyCart } from '../../redux/actions/cartActions'
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-const AddressForm = () => {
+const AddressForm = ({ navigation }) => {
+  const dispatch = useDispatch()
   const data = useSelector((state) => state.cart.cart)
   let cartDataId = data._id
   const [name, setName] = useState('')
@@ -31,7 +33,7 @@ const AddressForm = () => {
       return token;
     } catch (error) {
       console.log('Error al obtener el token:', error)
-      return null;
+      return null
     }
   }
 
@@ -87,7 +89,7 @@ const AddressForm = () => {
         setAddresses([...addresses, res.data.address])
       })
       .catch(err => console.log(err))
-  };
+  }
 
   const handleCancel = () => {
     setShowForm(false)
@@ -98,11 +100,37 @@ const AddressForm = () => {
     setCountry('')
     setZipCode('')
     setTelephone('')
-  };
+  }
 
   const handleAddNewAddress = () => {
     setShowForm(true)
-  };
+  }
+
+  const handleContinue = () => {
+    if (selectedAddress) {
+      console.log('Dirección seleccionada:', selectedAddress)
+      let data = {
+        address_id: selectedAddress
+      }
+      axios.put(apiUrl + `carts/address/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log('direccion agragada al carrito')
+          axios.put(apiUrl + `carts/checkout/${cartDataId}`,null,headers)
+            .then(res => {
+              console.log('ordern creada')
+              console.log(res.data.order)
+              let orderData = res.data.order
+              dispatch(emptyCart())
+              navigation.navigate('OrderDetails' , {orderData})
+            })
+            .catch(err => console.log(err.response))
+        })
+        .catch(err => console.log(JSON.stringify(res.response, null, 2)))
+    } else {
+      console.log('Debes seleccionar una dirección antes de continuar')
+    }
+  }
+
 
   return (
     <View style={styles.container}>
@@ -168,9 +196,12 @@ const AddressForm = () => {
           </View>
         </>
       ) : (
-        <View style={styles.addButtonContainer}>
-          <Button title="Add new address" onPress={handleAddNewAddress} />
-        </View>
+        <>
+          <View style={styles.addButtonContainer}>
+            <Button title="Add new address" onPress={handleAddNewAddress} />
+          </View>
+          <Button title="Continue" onPress={handleContinue} color="#62c060" />
+        </>
       )}
       {showAlert && (
         <View style={styles.alertContainer}>
@@ -208,6 +239,7 @@ const styles = StyleSheet.create({
   },
   addButtonContainer: {
     marginTop: 10,
+    paddingBottom: 10
   },
   buttonContainer: {
     flexDirection: 'row',

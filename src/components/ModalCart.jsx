@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeFromCart, updateCartItemMenos, updateCartItemMas } from '../../redux/actions/cartActions'
+import { removeFromCart, updateCartItemMenos, updateCartItemMas, emptyCart } from '../../redux/actions/cartActions'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
 export const ModalCart = ({navigation, setCartExpanded }) => {
@@ -134,9 +134,12 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
     }
   }
 
-  const emptyCart = () => {
-    axios.put(apiUrl + `carts/clear/${cartDataId}`, headers)
-      .then(res => console.log('Vaciado Correctamente'))
+  const emptyAllCart = () => {
+    axios.put(apiUrl + `carts/clear/${cartDataId}`, null,headers)
+      .then(res => {
+        console.log('Vaciado Correctamente')
+        dispatch(emptyCart())
+      })
       .catch(err => console.log(err))
   }
 
@@ -172,7 +175,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
         </TouchableOpacity>
         <View style={styles.container}>
           <Text style={styles.title}>Carrito de compra</Text>
-          <TouchableOpacity style={styles.addButton} onPress={emptyCart}>
+          <TouchableOpacity style={styles.addButton} onPress={emptyAllCart}>
             <Text style={styles.addButtonText}>Empty cart</Text>
           </TouchableOpacity>
           <FlatList
