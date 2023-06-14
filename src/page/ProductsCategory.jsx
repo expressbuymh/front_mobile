@@ -69,13 +69,14 @@ export const ProductsCategory = ({ route }) => {
         })
         .catch(err => console.log(err))
       console.log(route.params.category_id)
+      console.log(route.params.category_name)
       axios.get(apiUrl + `products?category_id=${route.params.category_id}`)
         .then(res => {
           //console.log(res.data.products)
           setDataProducts(res.data.products)
         })
         .catch(err => console.log(err))
-    }, []
+    }, [route.params.category_id]
   )
 
   const renderItem = ({ item }) => (
@@ -95,17 +96,19 @@ export const ProductsCategory = ({ route }) => {
           <Image style={styles.imgCard} source={{ uri: `${products?.photo}` }} />
         </View>
         <Text style={styles.titleCard}>{products?.name}</Text>
-        <ScrollView style={styles.containDescription}>
+        {/* <ScrollView style={styles.containDescription}>
           <Text style={styles.textDescription}>{products?.description}</Text>
-        </ScrollView>
+        </ScrollView> */}
         <Text style={styles.textPrice}>{`$${products?.price}`}</Text>
+       <View style={{flexDirection: 'column', width: '90%', alignItems: 'center',}}>
         <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
-          <Text>Details</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
-          <MaterialIcons name='shopping-cart' size={20} color="white" />
-          <Text style={styles.textButtonAddCart}>Add to Cart</Text>
-        </TouchableOpacity>
+            <Text>Details</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonCardCarts}>
+            <MaterialIcons name='shopping-cart' size={20} color="white" />
+            <Text style={styles.textButtonAddCart}>Add to Cart</Text>
+          </TouchableOpacity>
+       </View>
       </View>
     )
   }
@@ -126,9 +129,8 @@ export const ProductsCategory = ({ route }) => {
   }
 
   const generateCardPairs = () => {
-    const cardPairs = []
-    const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1) // Obtener un nuevo array con pares de datos
-
+    const cardPairs = [];
+    const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1); // Obtener un nuevo array con pares de datos
     for (let i = 0; i < dataPairs.length; i += 2) {
       const card1 = dataPairs[i]
       const card2 = dataPairs[i + 1]
@@ -195,7 +197,7 @@ export const ProductsCategory = ({ route }) => {
     <>
       <ImageBackground source={require('../../assets/categories.jpg')} style={styles.containerHeader}>
         <View style={styles.headerTextContent}>
-          <Text style={styles.textHeader}>ProductsCategory</Text>
+          <Text style={styles.textHeader}>{route.params.category_name.toUpperCase()}</Text>
         </View>
       </ImageBackground>
       <TouchableOpacity style={styles.buttonContainer} onPress={toggleFilter}>
@@ -228,10 +230,10 @@ export const ProductsCategory = ({ route }) => {
         </TouchableOpacity>
         <View style={styles.overlay}>
           <View style={styles.cardDetail}>
-            <View style={styles.imageContainer}>
-              <Image style={styles.imgCard} source={{ uri: `${detailDataProduct?.photo}` }} />
+            <View style={styles.imageContainer2}>
+              <Image style={{resizeMode: 'cover', flex: 1}} source={{ uri: `${detailDataProduct?.photo}` }} />
             </View>
-            <Text style={styles.titleCard}>{detailDataProduct?.name}</Text>
+            <Text style={styles.titleCardDetail}>{detailDataProduct?.name}</Text>
             <ScrollView style={styles.containDescription}>
               <Text style={styles.textDescription}>{detailDataProduct?.description}</Text>
             </ScrollView>
@@ -266,8 +268,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
   textHeader: {
-    fontWeight: 'bold',
+    fontWeight: '900',
     fontSize: 30,
+    color: '#4F46E5',
+    letterSpacing: 2,
+    fontStyle: 'italic'
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -294,8 +299,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '48%',
-    height: 500,
+    height: 'auto',
     alignItems: 'center',
+    justifyContent: 'space-between',
     borderColor: 'rgba(200, 200, 200, 0.7)',
     borderWidth: 2,
     borderStyle: 'solid',
@@ -312,9 +318,20 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginBottom: 10,
   },
+  imageContainer2: {
+    width: '90%',
+    height: 400,
+    borderRadius: 8,
+    overflow: 'hidden',
+    shadowColor: 'gray',
+    shadowOpacity: 0.7,
+    shadowRadius: 4,
+    elevation: 4,
+    marginBottom: 10,
+  },
   imgCard: {
     flex: 1,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   buttonCardDetails: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -343,16 +360,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   titleCard: {
-    fontSize: 25,
+    fontSize: 17,
     fontWeight: 'bold',
-    color: 'rgba(70, 70, 70, 1)',
+    color: '#4F46E5',
+    padding: 6
+  },
+  titleCardDetail: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#4F46E5',
     padding: 6
   },
   textDescription: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'rgba(90, 90, 90, 1)',
-    padding: 6
+    padding: 6,
+    textAlign: 'center'
   },
   containDescription: {
     width: '100%',
@@ -382,7 +406,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     width: '100%',
-    height: 400,
+    height: 'auto',
     justifyContent: 'center',
     alignItems: 'center'
   },
