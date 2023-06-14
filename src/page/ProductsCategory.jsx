@@ -9,6 +9,7 @@ import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const ProductsCategory = ({ route }) => {
+  console.log('esto es route', route.params.category_id)
   const data = useSelector((state) => state.cart.cart)
   const cartData = useSelector(state => state.cart.items)
   let cartDataId = data._id
@@ -22,57 +23,63 @@ export const ProductsCategory = ({ route }) => {
 
   let getToken = async () => {
     try {
-      let token = await AsyncStorage.getItem('token');
-      return token;
+      let token = await AsyncStorage.getItem('token')
+      return token
     } catch (error) {
-      console.log('Error al obtener el token:', error);
-      return null;
+      console.log('Error al obtener el token:', error)
+      return null
     }
   }
 
   let getHeaders = async () => {
     try {
       let token = await getToken();
-      let headers = { headers: { 'Authorization': `Bearer ${token}` } };
-      return headers;
+      let headers = { headers: { 'Authorization': `Bearer ${token}` } }
+      return headers
     } catch (error) {
-      console.log('Error al obtener las headers:', error);
+      console.log('Error al obtener las headers:', error)
       return null;
     }
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      const headers = await getHeaders();
-      //console.log('cart Data', cartData?.products[0].product_id.photo);
+      const headers = await getHeaders()
       setHeaders(headers)
     }
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
-  const filterNonPrintableChars = (str) => {
-    return str.replace(/[^\x20-\x7E]/g, '');
-  }
+
+  const [orderParams, setOrderParams] = useState(route.params);
+
+  useEffect(() => {
+
+    if (JSON.stringify(orderParams) == JSON.stringify(route.params)) {
+      setOrderParams(route.params)
+      axios.get(apiUrl + `products?category_id=${route.params.category_id}`)
+        .then(res => {
+          setDataProducts(res.data.products)
+        })
+        .catch(err => console.log(err))
+      console.log('Los parámetros han cambiado:', route.params)
+    }
+  }, [route.params])
 
   useEffect(
     () => {
       axios.get(apiUrl + 'menu')
         .then(res => {
-          /* let subCategories = res.data.subcategories
-          const filterSubCategory = subCategories.filter(item => item._id == route.params.category_id)
-          console.log('PIPO', filterNonPrintableChars(subCategories[0]._id) === filterNonPrintableChars(route.params.category_id));
-          console.log('PIPO', subCategories[0]._id.split('').map(c => c.charCodeAt(0)));
-          console.log('PIPO', route.params.category_id.split('').map(c => c.charCodeAt(0)));
-          console.log('PIPO', route.params.category_id, subCategories[0]._id);
-          console.log('filtro', filterSubCategory) */
-          setSubCategories(res.data.subcategories)
+          let subCategories = res.data.subcategories
+          const filterSubCategory = subCategories.filter(item => item.category_id == route.params.category_id)
+          console.log('filtro', filterSubCategory)
+          setSubCategories(filterSubCategory)
         })
         .catch(err => console.log(err))
       console.log(route.params.category_id)
       console.log(route.params.category_name)
       axios.get(apiUrl + `products?category_id=${route.params.category_id}`)
         .then(res => {
-          //console.log(res.data.products)
           setDataProducts(res.data.products)
         })
         .catch(err => console.log(err))
@@ -89,6 +96,15 @@ export const ProductsCategory = ({ route }) => {
     </TouchableOpacity>
   )
 
+  const handleMenuItemPress = (item) => {
+    axios.get(apiUrl + `products?subcategory_id=${item}`)
+      .then(res => {
+        setDataProducts(res.data.products)
+        setFilter(false)
+      })
+      .catch(err => console.log(err))
+  }
+
   const Card = ({ products }) => {
     return (
       <View style={styles.card}>
@@ -100,15 +116,15 @@ export const ProductsCategory = ({ route }) => {
           <Text style={styles.textDescription}>{products?.description}</Text>
         </ScrollView> */}
         <Text style={styles.textPrice}>{`$${products?.price}`}</Text>
-       <View style={{flexDirection: 'column', width: '90%', alignItems: 'center',}}>
-        <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
+        <View style={{ flexDirection: 'column', width: '90%', alignItems: 'center', }}>
+          <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
             <Text>Details</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
             <MaterialIcons name='shopping-cart' size={20} color="white" />
             <Text style={styles.textButtonAddCart}>Add to Cart</Text>
           </TouchableOpacity>
-       </View>
+        </View>
       </View>
     )
   }
@@ -231,7 +247,7 @@ export const ProductsCategory = ({ route }) => {
         <View style={styles.overlay}>
           <View style={styles.cardDetail}>
             <View style={styles.imageContainer2}>
-              <Image style={{resizeMode: 'cover', flex: 1}} source={{ uri: `${detailDataProduct?.photo}` }} />
+              <Image style={{ resizeMode: 'cover', flex: 1 }} source={{ uri: `${detailDataProduct?.photo}` }} />
             </View>
             <Text style={styles.titleCardDetail}>{detailDataProduct?.name}</Text>
             <ScrollView style={styles.containDescription}>
@@ -397,9 +413,11 @@ const styles = StyleSheet.create({
   closeButton: {
     flexDirection: 'row',
     padding: 10,
-    borderRadius: 5,
     backgroundColor: 'white',
     justifyContent: 'flex-end',
+    width: '80%',
+    borderTopEndRadius: 10,
+    borderTopLeftRadius: 10
   },
   cardDetail: {
     flexDirection: 'column',
@@ -413,7 +431,11 @@ const styles = StyleSheet.create({
   contentFilter: {
     backgroundColor: 'white',
     flexDirection: 'row',
-    width: '80%'
+    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomEndRadius: 10,
+    borderBottomLeftRadius: 10
   },
   overlayFilter: {
     flex: 1,
@@ -424,7 +446,15 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'column',
     justifyContent: 'center',
-    marginBottom: 10,
+    padding: 10,
+    alignItems: 'center',
+    borderColor: 'lightgray',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderTopWidth: 2,
+    borderBottomWidth: 0,
+    borderStyle: 'solid',
+    width: '100%'
   },
   itemText: {
     marginLeft: 10,

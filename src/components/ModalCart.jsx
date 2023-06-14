@@ -145,7 +145,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Image style={styles.imgCart} source={{ uri: `${item.photo}` }} />
+      <Image style={styles.imgCart} source={{ uri: `${item.product_id.photo}` }} />
       <View style={styles.itemDetails}>
         <Text>{item.product_id.name}</Text>
         <Text style={styles.itemPrice}>Price: ${item.product_id.price}</Text>
@@ -267,8 +267,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   imgCart: {
-    width: '20%',
-    height: '55%',
+    width: '15%',
+    height: '100%',
     resizeMode: 'cover',
   },
   quantityContainer: {
@@ -295,6 +295,7 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
+    paddingLeft: 10
   },
   totalText: {
     fontSize: 18,
