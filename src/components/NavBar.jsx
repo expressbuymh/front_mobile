@@ -143,11 +143,11 @@ export const NavBar = ({ navigation }) => {
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
           <View style={styles.menuUser}>
-            <TouchableOpacity style={styles.item} onPress={signOut}>
+            <TouchableOpacity style={styles.item} >
               <Text style={styles.itemText}>Profile</Text>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={signOut}>
               <Text style={styles.itemText}>Sign Out</Text>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
@@ -156,7 +156,7 @@ export const NavBar = ({ navigation }) => {
       </Modal>
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
-        <ModalCart setCartExpanded={setCartExpanded} />
+        <ModalCart setCartExpanded={setCartExpanded} navigation={navigation}/>
       </Modal>
     </View>
   )

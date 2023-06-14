@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList, Image, Button } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeFromCart, updateCartItemMenos, updateCartItemMas } from '../../redux/actions/cartActions'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-export const ModalCart = ({ setCartExpanded }) => {
+export const ModalCart = ({navigation, setCartExpanded }) => {
   const dispatch = useDispatch()
   const data = useSelector((state) => state.cart.cart)
   let cartDataId = data._id
@@ -181,7 +181,18 @@ export const ModalCart = ({ setCartExpanded }) => {
             keyExtractor={(item) => item.product_id._id.toString()}
             contentContainerStyle={styles.itemList}
           />
-          <Text>Total: ${total}</Text>
+          <View style={styles.containerTotal}>
+            <Text style={styles.totalText}>Total: ${total}</Text>
+          </View>
+          <Button
+            title="Go to Pay"
+            onPress={() => {
+              setCartExpanded(false)
+              navigation.navigate('AddressForm')
+              console.log('Button pressed')
+            }}
+            color="#62c060"
+          />
         </View>
       </View>
 
@@ -281,5 +292,15 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#62c060',
+  },
+  containerTotal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10
   },
 })

@@ -5,6 +5,7 @@ import { Home } from './src/page/Home'
 import { SignUpForm } from './src/page/SignUpForm'
 import { HomeProducts } from './src/page/HomeProducts'
 import { ProductsCategory } from './src/page/ProductsCategory'
+import AddressForm from './src/page/AddressForm'
 import { NavBar } from './src/components/NavBar'
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -39,6 +40,11 @@ const App = () => {
             name="ProductsCategory"
             component={ProductsCategory}
             options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="AddressForm"
+            component={AddressForm}
+            options={{ header: undefined }}
           />
         </Stack.Navigator>
       </NavigationContainer>
