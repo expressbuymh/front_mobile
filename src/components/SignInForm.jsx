@@ -4,11 +4,13 @@ import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { almacenarCarrito, addToCart } from '../../redux/actions/cartActions';
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const SignInForm = ({ navigation }) => {
-
+  const dispatch = useDispatch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -23,7 +25,6 @@ export const SignInForm = ({ navigation }) => {
     };
     console.log('Cargando...')
     console.log(apiUrl + 'auth/signin')
-    //navigation.navigate('HomeProducts')
     axios.post(apiUrl + 'auth/signin', data)
       .then((res) => {
         console.log('Entramos');
@@ -35,9 +36,9 @@ export const SignInForm = ({ navigation }) => {
         AsyncStorage.setItem("user", JSON.stringify(res.data.user))
           .then(() => console.log('Datos De usuario guardado'))
           .catch(err => console.log(err))
-        AsyncStorage.setItem("cart", JSON.stringify(res.data.cart))
-          .then(() => console.log('Datos Del carrito guardado'))
-          .catch(err => console.log(err))
+        console.log(res.data.cart)
+        dispatch(almacenarCarrito(res.data.cart))
+        dispatch(addToCart(res.data.cart.products))
       })
       .catch(err => {
         console.log(err);

@@ -1,34 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList, Image, Button } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import Constants from 'expo-constants'
-const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
+import { useDispatch, useSelector } from 'react-redux'
+import { removeFromCart, updateCartItemMenos, updateCartItemMas } from '../../redux/actions/cartActions'
+const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-export const ModalCart = ({ setCartExpanded }) => {
-
-  const [cartData, setCartData] = useState()
+export const ModalCart = ({navigation, setCartExpanded }) => {
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.cart.cart)
+  let cartDataId = data._id
+  const cartData = useSelector(state => state.cart.items)
+  const [headers, setHeaders] = useState()
+  const [total, setTotal] = useState(0);
 
   let getToken = async () => {
     try {
-      let token = await AsyncStorage.getItem('token');
+      let token = await AsyncStorage.getItem('token')
       return token;
     } catch (error) {
-      console.log('Error al obtener el token:', error);
-      return null;
-    }
-  }
-
-  const fetchCartData = async () => {
-    try {
-      const cartString = await AsyncStorage.getItem('cart');
-      if (cartString) {
-        const cart = JSON.parse(cartString);
-        return cart
-      }
-    } catch (error) {
-      console.log(error);
+      console.log('Error al obtener el token:', error)
+      return null
     }
   }
 
@@ -38,8 +32,8 @@ export const ModalCart = ({ setCartExpanded }) => {
       let headers = { headers: { 'Authorization': `Bearer ${token}` } };
       return headers;
     } catch (error) {
-      console.log('Error al obtener las headers:', error);
-      return null;
+      console.log('Error al obtener las headers:', error)
+      return null
     }
   }
 
@@ -47,13 +41,11 @@ export const ModalCart = ({ setCartExpanded }) => {
     console.log('entramos al carrito ');
 
     const fetchData = async () => {
-      const cartData = await fetchCartData();
       const headers = await getHeaders();
-      //console.log('cart Data', cartData?.products[0].product_id.photo);
-      setCartData(cartData?.products)
+      setHeaders(headers)
     }
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
 
   const closeMenu = () => {
@@ -62,25 +54,113 @@ export const ModalCart = ({ setCartExpanded }) => {
 
   const [items, setItems] = useState([]);
 
-  const addItemToCart = (item) => {
-    setItems([...items, item])
-    setCartData([...cartData, item])
-
-  };
-
   const removeItemFromCart = (item) => {
-    const updatedItems = cartData.filter((cartItem) => cartItem.id !== item.id);
-    setItems(updatedItems);
+    let dataDelete = {
+      product_id: item
+    }
+    axios.post(apiUrl + `carts/deleteproduct/${cartDataId}`, dataDelete, headers)
+      .then(res => {
+        console.log('Producto Borrado')
+        dispatch(removeFromCart(item))
+      })
+      .catch(err => console.log(err))
+  }
+
+  useEffect(() => {
+    calculateTotal();
+  }, [cartData]);
+
+  const calculateTotal = () => {
+    let total = 0
+    cartData.forEach(item => {
+      const price = item.product_id.price
+      const quantity = item.quantity
+      total += price * quantity
+    });
+    setTotal(total)
+  }
+
+  const decrementQuantity = (productId) => {
+    const updatedItems = cartData.map((item) => {
+      if (item.product_id._id === productId) {
+        return {
+          ...item,
+          quantity: item.quantity - 1,
+        };
+      }
+      return item;
+    });
+
+    const updatedItem = updatedItems.find((item) => item.product_id._id === productId);
+    if (updatedItem) {
+      let data = {
+        product_id: updatedItem.product_id._id,
+        quantity: updatedItem.quantity,
+      };
+
+      axios
+        .post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then((res) => {
+          console.log(res);
+          dispatch(updateCartItemMenos(updatedItem));
+        })
+        .catch((err) => console.log(err));
+    }
   };
+
+  const incrementQuantity = (productId) => {
+    const updatedItems = cartData.map((item) => {
+      if (item.product_id._id === productId) {
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        }
+      }
+      return item
+    })
+
+    const updatedItem = updatedItems.find((item) => item.product_id._id === productId)
+    if (updatedItem) {
+      let data = {
+        product_id: updatedItem.product_id._id,
+        quantity: updatedItem.quantity
+      }
+      axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log(res)
+          dispatch(updateCartItemMas(updatedItem))
+        })
+        .catch(err => console.log(err))
+    }
+  }
+
+  const emptyCart = () => {
+    axios.put(apiUrl + `carts/clear/${cartDataId}`, headers)
+      .then(res => console.log('Vaciado Correctamente'))
+      .catch(err => console.log(err))
+  }
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Image style={styles.imgCart} source={{ uri: `${item.photo}` }}/>
-      <Text>{item.product_id.name}</Text>
-      <TouchableOpacity onPress={() => removeItemFromCart(item)}>
+      <Image style={styles.imgCart} source={{ uri: `${item.photo}` }} />
+      <View style={styles.itemDetails}>
+        <Text>{item.product_id.name}</Text>
+        <Text style={styles.itemPrice}>Price: ${item.product_id.price}</Text>
+      </View>
+      <View style={styles.quantityContainer}>
+        <TouchableOpacity style={styles.quantityButton} onPress={() => decrementQuantity(item.product_id._id)}>
+          <Ionicons name="remove" size={20} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.quantity}>{item.quantity}</Text>
+        <TouchableOpacity style={styles.quantityButton} onPress={() => incrementQuantity(item.product_id._id)}>
+          <Ionicons name="add" size={20} color="black" />
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity onPress={() => removeItemFromCart(item.product_id._id)}>
         <Ionicons name="trash" size={24} color="black" />
       </TouchableOpacity>
     </View>
+
   );
 
   return (
@@ -92,7 +172,7 @@ export const ModalCart = ({ setCartExpanded }) => {
         </TouchableOpacity>
         <View style={styles.container}>
           <Text style={styles.title}>Carrito de compra</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => addItemToCart({ id: Date.now(), name: 'Producto' })}>
+          <TouchableOpacity style={styles.addButton} onPress={emptyCart}>
             <Text style={styles.addButtonText}>Empty cart</Text>
           </TouchableOpacity>
           <FlatList
@@ -100,6 +180,18 @@ export const ModalCart = ({ setCartExpanded }) => {
             renderItem={renderItem}
             keyExtractor={(item) => item.product_id._id.toString()}
             contentContainerStyle={styles.itemList}
+          />
+          <View style={styles.containerTotal}>
+            <Text style={styles.totalText}>Total: ${total}</Text>
+          </View>
+          <Button
+            title="Go to Pay"
+            onPress={() => {
+              setCartExpanded(false)
+              navigation.navigate('AddressForm')
+              console.log('Button pressed')
+            }}
+            color="#62c060"
           />
         </View>
       </View>
@@ -172,8 +264,43 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   imgCart: {
-    width: '10%',
+    width: '20%',
     height: '55%',
     resizeMode: 'cover',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 5
+  },
+  quantityButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'lightgray',
+    marginRight: 5,
+    borderRadius: 10
+  },
+  quantity: {
+    fontSize: 16,
+    marginHorizontal: 5,
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  itemDetails: {
+    flex: 1,
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#62c060',
+  },
+  containerTotal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10
   },
 })
