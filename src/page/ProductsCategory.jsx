@@ -104,7 +104,7 @@ export const ProductsCategory = ({ route }) => {
         <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
             <Text>Details</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonCardCarts}>
+          <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
             <MaterialIcons name='shopping-cart' size={20} color="white" />
             <Text style={styles.textButtonAddCart}>Add to Cart</Text>
           </TouchableOpacity>

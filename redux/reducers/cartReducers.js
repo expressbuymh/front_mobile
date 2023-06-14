@@ -48,6 +48,16 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         items: updatedItemsMenos,
       }
+    case 'EMPTY_CART':
+      return {
+        ...state,
+        items: [],
+      }
+    case 'BORRAR_CARRITO':
+      return {
+        ...state,
+        cart: {},
+      };
 
     default:
       return state

@@ -6,6 +6,7 @@ import { SignUpForm } from './src/page/SignUpForm'
 import { HomeProducts } from './src/page/HomeProducts'
 import { ProductsCategory } from './src/page/ProductsCategory'
 import AddressForm from './src/page/AddressForm'
+import { OrderDetails } from './src/page/OrderDetails'
 import { NavBar } from './src/components/NavBar'
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -44,6 +45,11 @@ const App = () => {
           <Stack.Screen
             name="AddressForm"
             component={AddressForm}
+            options={{ header: undefined }}
+          />
+          <Stack.Screen
+            name="OrderDetails"
+            component={OrderDetails}
             options={{ header: undefined }}
           />
         </Stack.Navigator>

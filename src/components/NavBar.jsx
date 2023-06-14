@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList, Alert } from 'react-native'
 import { Ionicons, MaterialIcons, AntDesign, Entypo } from '@expo/vector-icons'
 import { ModalCart } from './ModalCart'
+import { useDispatch } from 'react-redux'
+import { borrarCarrito } from '../../redux/actions/cartActions'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const NavBar = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [isMenuExpanded, setMenuExpanded] = useState(false)
   const [isUserExpanded, setUserExpanded] = useState(false)
   const [isCartExpanded, setCartExpanded] = useState(false)
@@ -66,7 +69,7 @@ export const NavBar = ({ navigation }) => {
         AsyncStorage.removeItem("user")
           .then(() => console.log('user eliminado'))
           .catch(err => console.log(err))
-        //localStorage.removeItem("user")
+        dispatch(borrarCarrito())
       })
       .catch(err => alert(err))
   }
@@ -151,7 +154,7 @@ export const NavBar = ({ navigation }) => {
             </View>
             <View style={{ marginTop: 30 }}>
               <View style={{ flexDirection: 'row', columnGap: 12, alignItems: 'center', borderBottomWidth: 1, paddingBottom: 12 }}>
-              <Entypo name="tools" size={30} color='#4F46E5' />
+                <Entypo name="tools" size={30} color='#4F46E5' />
                 <View>
                   <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Suport Service</Text>
                   <Text>Technical support for your products</Text>
@@ -169,26 +172,28 @@ export const NavBar = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.menuUser}>
             <TouchableOpacity style={styles.item} onPress={signOut}>
-              <View style={{flexDirection: 'row', marginBottom: 3}}>
+              <View style={{ flexDirection: 'row', marginBottom: 3 }}>
                 <AntDesign name="user" size={24} color="black" />
                 <Text style={styles.itemText}>Profile</Text>
               </View>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
-            <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> { Alert.alert('LogOut', 'Are you sure?', [
-              {
-                text: 'Yes',
-                onPress: () => {
-                  console.log('Yes pressed')
-                  goHome()
-              }
-              },
-              {
-                text: 'Cancel',
-                onPress: () => {console.log('Cancel pressed')}
-              }
-            ]) }}>
-              <Entypo name="log-out" size={24} color="black"/>
+            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => {
+              Alert.alert('LogOut', 'Are you sure?', [
+                {
+                  text: 'Yes',
+                  onPress: () => {
+                    console.log('Yes pressed')
+                    goHome()
+                  }
+                },
+                {
+                  text: 'Cancel',
+                  onPress: () => { console.log('Cancel pressed') }
+                }
+              ])
+            }}>
+              <Entypo name="log-out" size={24} color="black" />
               <Text style={styles.itemText}>Sign Out</Text>
             </TouchableOpacity>
           </View>
@@ -196,7 +201,7 @@ export const NavBar = ({ navigation }) => {
       </Modal>
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
-        <ModalCart setCartExpanded={setCartExpanded} navigation={navigation}/>
+        <ModalCart setCartExpanded={setCartExpanded} navigation={navigation} />
       </Modal>
     </View>
   )

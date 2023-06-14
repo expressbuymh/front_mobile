@@ -16,10 +16,17 @@ export const almacenarCarrito = (cartData) => ({
 export const updateCartItemMas = (product) => ({
     type: 'UPDATE_CART_ITEM_MAS',
     payload: product,
-  })
+})
 
-  export const updateCartItemMenos = (product) => ({
+export const updateCartItemMenos = (product) => ({
     type: 'UPDATE_CART_ITEM_MENOS',
     payload: product,
+})
+
+export const emptyCart = () => ({
+    type: 'EMPTY_CART',
+})
+
+export const borrarCarrito = () => ({
+    type: 'BORRAR_CARRITO',
   })
-  
