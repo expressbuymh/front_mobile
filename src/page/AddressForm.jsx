@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native'
+import { View, TextInput, Button, StyleSheet, Text, Alert } from 'react-native'
 import Constants from 'expo-constants'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
@@ -88,7 +88,10 @@ const AddressForm = ({ navigation }) => {
         setTelephone('')
         setAddresses([...addresses, res.data.address])
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        showAlertt(err.response.data.message)
+      })
   }
 
   const handleCancel = () => {
@@ -115,22 +118,37 @@ const AddressForm = ({ navigation }) => {
       axios.put(apiUrl + `carts/address/${cartDataId}`, data, headers)
         .then(res => {
           console.log('direccion agragada al carrito')
-          axios.put(apiUrl + `carts/checkout/${cartDataId}`,null,headers)
+          axios.put(apiUrl + `carts/checkout/${cartDataId}`, null, headers)
             .then(res => {
               console.log('ordern creada')
               console.log(res.data.order)
               let orderData = res.data.order
               dispatch(emptyCart())
-              navigation.navigate('OrderDetails' , {orderData})
+              navigation.navigate('OrderDetails', { orderData })
             })
-            .catch(err => console.log(err.response))
+            .catch(err => {
+              console.log(err.response)
+              showAlertt(err.response.data.message)
+            })
         })
-        .catch(err => console.log(JSON.stringify(res.response, null, 2)))
+        .catch(err => showAlertt(err.response.data.message))
     } else {
       console.log('Debes seleccionar una dirección antes de continuar')
     }
   }
 
+  const showAlertt = (messages) => {
+    const alertMessage = messages.map((err) => `${err.path}: ${err.message}`).join('\n')
+    Alert.alert(
+      '¡Alert!',
+      alertMessage,
+      [
+        { text: 'Ok', onPress: () => console.log('Botón Aceptar presionado') },
+        { text: 'Cancel', onPress: () => console.log('Botón Cancelar presionado') },
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
     <View style={styles.container}>

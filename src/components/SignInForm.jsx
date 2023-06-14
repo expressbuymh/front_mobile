@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, Alert } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants'
 import axios from 'axios';
@@ -41,10 +41,24 @@ export const SignInForm = ({ navigation }) => {
         dispatch(addToCart(res.data.cart.products))
       })
       .catch(err => {
-        console.log(err);
-        console.log('No entramos');
-      });
-  };
+        console.log(err.response.data.message)
+        console.log('No entramos')
+        showAlert(err.response.data.message)
+      })
+  }
+
+  const showAlert = (messages) => {
+    const alertMessage = messages.map((err) => `${err.path}: ${err.message}`).join('\n')
+    Alert.alert(
+      '¡Alert!',
+      alertMessage,
+      [
+        { text: 'Ok', onPress: () => console.log('Botón Aceptar presionado') },
+        { text: 'Cancel', onPress: () => console.log('Botón Cancelar presionado') },
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
 
