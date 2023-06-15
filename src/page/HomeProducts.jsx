@@ -24,7 +24,7 @@ export const HomeProducts = () => {
 
   return (
     <>
-      <ScrollView style={{ padding: 8 }}>
+      <ScrollView style={{backgroundColor: 'white', padding: 8 }}>
         <Text style={styles.textTitle}>EXPRESS BUY</Text>
         <View style={styles.container} >
           <Swiper autoplay>
@@ -81,9 +81,9 @@ export const HomeProducts = () => {
                               <TouchableOpacity onPress={()=> {console.log('hola')}} style={{backgroundColor: 'red', padding: 6, width: 100, borderRadius: 7, backgroundColor: '#fff', borderWidth: 1, borderColor: '#000'}} >
                                 <Text style={{textAlign: 'center'}}>Details</Text>
                               </TouchableOpacity>
-                              <TouchableOpacity style={{display: 'flex', flexDirection: 'row', borderWidth: 1, borderColor: '#000', width: 120, justifyContent: 'center', alignItems: 'center', padding: 4, borderRadius: 6, backgroundColor: '#4F46E5'}}>
-                                <MaterialIcons name='shopping-cart' size={20} color="black"/>
-                                <Text>Add to Cart</Text>
+                              <TouchableOpacity style={{display: 'flex', flexDirection: 'row',  width: 120, justifyContent: 'center', alignItems: 'center', padding: 4, borderRadius: 6, backgroundColor: '#4F46E5'}}>
+                                <MaterialIcons name='shopping-cart' size={20} color="white"/>
+                                <Text style ={{color: 'white'}}>Add to Cart</Text>
                               </TouchableOpacity>
                             </View>
                           </View>
@@ -137,9 +137,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   subContainerMinPromos: {
-    height: 110,
-    width: '20%',
-    borderRadius: 100,
+    height: 150,
+    width: '22%',
+    borderRadius: 10,
     alignItems: 'center',
     elevation: 6,
     backgroundColor: '#eee'

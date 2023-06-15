@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants'
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
+
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const ProductsCategory = ({ route }) => {
@@ -20,6 +21,9 @@ export const ProductsCategory = ({ route }) => {
   const [subCategories, setSubCategories] = useState()
   const [dataProducts, setDataProducts] = useState([])
   const [headers, setHeaders] = useState()
+  const [toggleButtonCart, setToggleButtonCart] = useState(false)
+  const [validar, setValidar] = useState(true)
+  const [toggleId, setToggleId] = useState()
 
   let getToken = async () => {
     try {
@@ -105,7 +109,7 @@ export const ProductsCategory = ({ route }) => {
       .catch(err => console.log(err))
   }
 
-  const Card = ({ products }) => {
+  const Card = ({ products, mostrar }) => {
     return (
       <View style={styles.card}>
         <View style={styles.imageContainer}>
@@ -120,10 +124,20 @@ export const ProductsCategory = ({ route }) => {
           <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
             <Text>Details</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
+          {!toggleButtonCart ? <TouchableOpacity style={styles.buttonCardCarts} onPress={() => addProduct(products)}>
             <MaterialIcons name='shopping-cart' size={20} color="white" />
             <Text style={styles.textButtonAddCart}>Add to Cart</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> :
+            <View style={styles.quantityContainer} >
+              <TouchableOpacity style={styles.quantityButton} /* onPress={() => decrementQuantity(item.product_id._id)} */>
+                <Ionicons name="remove" size={20} color="black" />
+              </TouchableOpacity>
+              <Text style={styles.quantity}>{/* {item.quantity} */} 1</Text>
+              <TouchableOpacity style={styles.quantityButton} /* onPress={() => incrementQuantity(item.product_id._id)} */>
+                <Ionicons name="add" size={20} color="black" />
+              </TouchableOpacity>
+            </View>}
+
         </View>
       </View>
     )
@@ -144,7 +158,7 @@ export const ProductsCategory = ({ route }) => {
     setFilter(false)
   }
 
-  const generateCardPairs = () => {
+  const generateCardPairs = () => {      
     const cardPairs = [];
     const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1); // Obtener un nuevo array con pares de datos
     for (let i = 0; i < dataPairs.length; i += 2) {
@@ -152,18 +166,18 @@ export const ProductsCategory = ({ route }) => {
       const card2 = dataPairs[i + 1]
       cardPairs.push(
         <View key={i} style={styles.row}>
-          <Card products={card1} />
-          {card2 && <Card products={card2} />}
+          <Card products={card1}  mostrar={validar}/>
+          {card2 && <Card products={card2} mostrar={validar} />}
         </View>
       )
     }
 
     // Agregar tarjeta individual para el último elemento si la longitud de data es impar
     if (dataProducts.length % 2 !== 0) {
-      const lastCard = dataProducts[dataProducts.length - 1];
+      const lastCard = dataProducts[dataProducts.length - 1]
       cardPairs.push(
         <View key={dataProducts.length} style={styles.row}>
-          <Card products={lastCard} />
+          <Card products={lastCard} mostrar={validar} />
         </View>
       )
     }
@@ -185,12 +199,12 @@ export const ProductsCategory = ({ route }) => {
       },
       quantity: 1
     }
-
+    
+    
     const existingProduct = cartData.find(item => item.product_id._id === product._id)
     if (existingProduct) {
       data.quantity = existingProduct.quantity + 1
       dataProduct.quantity = data.quantity
-
       axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
         .then(res => {
           console.log(res)
@@ -306,6 +320,7 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingVertical: 20,
+    backgroundColor: 'white'
   },
   row: {
     flexDirection: 'row',
@@ -319,9 +334,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderColor: 'rgba(200, 200, 200, 0.7)',
-    borderWidth: 2,
+    borderWidth: 0,
     borderStyle: 'solid',
-    borderRadius: 5
+    borderRadius: 5,
+    shadowColor: 'gray',
+    shadowOpacity: 1.9,
+    shadowRadius: 4,
+    elevation: 4,
+    marginBottom: 10,
   },
   imageContainer: {
     width: '90%',
@@ -347,7 +367,7 @@ const styles = StyleSheet.create({
   },
   imgCard: {
     flex: 1,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   buttonCardDetails: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -462,5 +482,10 @@ const styles = StyleSheet.create({
   },
   textButtonAddCart: {
     color: 'white'
-  }
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 5
+  },
 });

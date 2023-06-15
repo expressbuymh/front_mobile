@@ -209,14 +209,14 @@ const AddressForm = ({ navigation }) => {
             onChangeText={setTelephone}
           />
           <View style={styles.buttonContainer}>
-            <Button title="Send" onPress={handleSubmit} />
-            <Button title="Cancel" onPress={handleCancel} />
+            <Button title="Send" onPress={handleSubmit} color="#62c060" />
+            <Button title="Cancel" onPress={handleCancel} color='#4F46E5' />
           </View>
         </>
       ) : (
         <>
           <View style={styles.addButtonContainer}>
-            <Button title="Add new address" onPress={handleAddNewAddress} />
+            <Button title="Add new address" onPress={handleAddNewAddress} color='#4F46E5' />
           </View>
           <Button title="Continue" onPress={handleContinue} color="#62c060" />
         </>

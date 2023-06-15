@@ -57,10 +57,10 @@ export const SignUpForm = ({ navigation }) => {
     <>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../../assets/forms.jpg')}
           style={styles.background}
           imageStyle={styles.backgroundImage}
         >
+          <Text style={styles.textLogo}>ExBy</Text>
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
@@ -171,5 +171,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     height: 50,
     borderRadius: 10,
+  },
+  textLogo: {
+    fontSize: 50,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginBottom: 40
   }
 });
