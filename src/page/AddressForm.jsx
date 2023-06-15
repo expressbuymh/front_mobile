@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native'
+import { View, TextInput, Button, StyleSheet, Text, Alert } from 'react-native'
 import Constants from 'expo-constants'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { RadioButton } from 'react-native-paper'
+import { emptyCart } from '../../redux/actions/cartActions'
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-const AddressForm = () => {
+const AddressForm = ({ navigation }) => {
+  const dispatch = useDispatch()
   const data = useSelector((state) => state.cart.cart)
   let cartDataId = data._id
   const [name, setName] = useState('')
@@ -31,7 +33,7 @@ const AddressForm = () => {
       return token;
     } catch (error) {
       console.log('Error al obtener el token:', error)
-      return null;
+      return null
     }
   }
 
@@ -86,8 +88,11 @@ const AddressForm = () => {
         setTelephone('')
         setAddresses([...addresses, res.data.address])
       })
-      .catch(err => console.log(err))
-  };
+      .catch(err => {
+        console.log(err)
+        showAlertt(err.response.data.message)
+      })
+  }
 
   const handleCancel = () => {
     setShowForm(false)
@@ -98,11 +103,52 @@ const AddressForm = () => {
     setCountry('')
     setZipCode('')
     setTelephone('')
-  };
+  }
 
   const handleAddNewAddress = () => {
     setShowForm(true)
-  };
+  }
+
+  const handleContinue = () => {
+    if (selectedAddress) {
+      console.log('Dirección seleccionada:', selectedAddress)
+      let data = {
+        address_id: selectedAddress
+      }
+      axios.put(apiUrl + `carts/address/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log('direccion agragada al carrito')
+          axios.put(apiUrl + `carts/checkout/${cartDataId}`, null, headers)
+            .then(res => {
+              console.log('ordern creada')
+              console.log(res.data.order)
+              let orderData = res.data.order
+              dispatch(emptyCart())
+              navigation.navigate('OrderDetails', { orderData })
+            })
+            .catch(err => {
+              console.log(err.response)
+              showAlertt(err.response.data.message)
+            })
+        })
+        .catch(err => showAlertt(err.response.data.message))
+    } else {
+      console.log('Debes seleccionar una dirección antes de continuar')
+    }
+  }
+
+  const showAlertt = (messages) => {
+    const alertMessage = messages.map((err) => `${err.path}: ${err.message}`).join('\n')
+    Alert.alert(
+      '¡Alert!',
+      alertMessage,
+      [
+        { text: 'Ok', onPress: () => console.log('Botón Aceptar presionado') },
+        { text: 'Cancel', onPress: () => console.log('Botón Cancelar presionado') },
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -163,14 +209,17 @@ const AddressForm = () => {
             onChangeText={setTelephone}
           />
           <View style={styles.buttonContainer}>
-            <Button title="Send" onPress={handleSubmit} />
-            <Button title="Cancel" onPress={handleCancel} />
+            <Button title="Send" onPress={handleSubmit} color="#62c060" />
+            <Button title="Cancel" onPress={handleCancel} color='#4F46E5' />
           </View>
         </>
       ) : (
-        <View style={styles.addButtonContainer}>
-          <Button title="Add new address" onPress={handleAddNewAddress} />
-        </View>
+        <>
+          <View style={styles.addButtonContainer}>
+            <Button title="Add new address" onPress={handleAddNewAddress} color='#4F46E5' />
+          </View>
+          <Button title="Continue" onPress={handleContinue} color="#62c060" />
+        </>
       )}
       {showAlert && (
         <View style={styles.alertContainer}>
@@ -208,6 +257,7 @@ const styles = StyleSheet.create({
   },
   addButtonContainer: {
     marginTop: 10,
+    paddingBottom: 10
   },
   buttonContainer: {
     flexDirection: 'row',

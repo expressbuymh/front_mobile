@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, Alert } from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import Constants from 'expo-constants'
 import axios from 'axios';
@@ -39,18 +39,35 @@ export const SignInForm = ({ navigation }) => {
         console.log(res.data.cart)
         dispatch(almacenarCarrito(res.data.cart))
         dispatch(addToCart(res.data.cart.products))
+        setEmail('')
+        setPassword('')
       })
       .catch(err => {
-        console.log(err);
-        console.log('No entramos');
-      });
-  };
+        console.log(err.response.data.message)
+        console.log('No entramos')
+        showAlert(err.response.data.message)
+      })
+  }
+
+  const showAlert = (messages) => {
+    const alertMessage = messages.map((err) => `${err.path}: ${err.message}`).join('\n')
+    Alert.alert(
+      '¡Alert!',
+      alertMessage,
+      [
+        { text: 'Ok', onPress: () => console.log('Botón Aceptar presionado') },
+        { text: 'Cancel', onPress: () => console.log('Botón Cancelar presionado') },
+      ],
+      { cancelable: false }
+    )
+  }
 
   return (
 
     <View style={styles.container}>
       <View style={styles.containLogo}>
-        <Image source={require('../../assets/favicon.png')} />
+        <Text style={styles.logoText}>ExBy</Text>
+        {/* <Image source={require('../../assets/favicon.png')} /> */}
         <Text style={styles.textLogo}> Sing in to your account </Text>
       </View>
       <View style={styles.inputContainer}>
@@ -135,5 +152,11 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontSize: 25,
     paddingVertical: 15
+  },
+  logoText: {
+    fontSize: 40,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginLeft: 10
   }
 });

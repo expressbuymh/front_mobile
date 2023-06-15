@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, Dimensions, FlatList, Alert } from 'react-native'
 import { Ionicons, MaterialIcons, AntDesign, Entypo } from '@expo/vector-icons'
 import { ModalCart } from './ModalCart'
+import { useDispatch } from 'react-redux'
+import { borrarCarrito } from '../../redux/actions/cartActions'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const NavBar = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [isMenuExpanded, setMenuExpanded] = useState(false)
   const [isUserExpanded, setUserExpanded] = useState(false)
   const [isCartExpanded, setCartExpanded] = useState(false)
@@ -23,15 +26,15 @@ export const NavBar = ({ navigation }) => {
   }
 
   const toggleMenu = () => {
-    setMenuExpanded(!isMenuExpanded);
+    setMenuExpanded(true);
   }
 
   const toggleUser = () => {
-    setUserExpanded(!isUserExpanded)
+    setUserExpanded(true)
   }
 
   const toggleCart = () => {
-    setCartExpanded(!isCartExpanded)
+    setCartExpanded(true)
   }
 
   const closeMenu = () => {
@@ -72,7 +75,7 @@ export const NavBar = ({ navigation }) => {
         AsyncStorage.removeItem("user")
           .then(() => console.log('user eliminado'))
           .catch(err => console.log(err))
-        //localStorage.removeItem("user")
+        dispatch(borrarCarrito())
       })
       .catch(err => alert(err))
   }
@@ -99,12 +102,15 @@ export const NavBar = ({ navigation }) => {
   )
 
   const handleMenuItemPress = (category_id, category_name) => {
-    navigation.navigate('ProductsCategory', { category_id, category_name })
-    console.log('Se hizo clic en el elemento:', category_id);
+    navigation.navigate('ProductsCategory', { category_id, category_name, isMenuExpanded, setMenuExpanded })
+    console.log('Se hizo clic en el elemento:', category_id)
   }
 
   const returnHome = () => {
     setMenuExpanded(false)
+    setUserExpanded(false)
+    setCartExpanded(false)
+    console.log('Se preciono home')
     navigation.navigate('HomeProducts')
   }
 
@@ -115,7 +121,7 @@ export const NavBar = ({ navigation }) => {
           <TouchableOpacity onPress={toggleMenu} style={styles.button}>
             <Ionicons name='menu' size={24} color="white" />
           </TouchableOpacity>
-          <Image style={styles.logo} source={require('../../assets/favicon.png')} />
+          <Text style={styles.textLogo}>ExBy</Text>
         </View>
         <View style={styles.menuLogo}>
           <TouchableOpacity onPress={toggleUser} style={styles.button2}>
@@ -157,7 +163,7 @@ export const NavBar = ({ navigation }) => {
             </View>
             <View style={{ marginTop: 30 }}>
               <View style={{ flexDirection: 'row', columnGap: 12, alignItems: 'center', borderBottomWidth: 1, paddingBottom: 12 }}>
-              <Entypo name="tools" size={30} color='#4F46E5' />
+                <Entypo name="tools" size={30} color='#4F46E5' />
                 <View>
                   <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Suport Service</Text>
                   <Text>Technical support for your products</Text>
@@ -204,7 +210,7 @@ export const NavBar = ({ navigation }) => {
       </Modal>
 
       <Modal visible={isCartExpanded} animationType="slide" transparent={true}>
-        <ModalCart setCartExpanded={setCartExpanded} navigation={navigation}/>
+        <ModalCart setCartExpanded={setCartExpanded} navigation={navigation} />
       </Modal>
     </View>
   )
@@ -321,4 +327,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  textLogo: {
+    fontSize: 30,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginLeft: 10
+  }
 })

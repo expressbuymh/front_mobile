@@ -6,15 +6,17 @@ import { SignUpForm } from './src/page/SignUpForm'
 import { HomeProducts } from './src/page/HomeProducts'
 import { ProductsCategory } from './src/page/ProductsCategory'
 import AddressForm from './src/page/AddressForm'
+import { OrderDetails } from './src/page/OrderDetails'
 import { NavBar } from './src/components/NavBar'
 import { Provider } from 'react-redux'
 import UserProfile  from './src/page/UserProfile'
 import ChangeAddressForm from './src/components/ChangeAddressForm'
 import store from './redux/store'
+import Toast from 'react-native-toast-message'
 
 const Stack = createStackNavigator()
 
-const App = () => {
+const App = (props) => {
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -61,6 +63,7 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+     <Toast/>
     </Provider>
   );
 };

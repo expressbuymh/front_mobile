@@ -5,10 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import Constants from 'expo-constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeFromCart, updateCartItemMenos, updateCartItemMas } from '../../redux/actions/cartActions'
+import { removeFromCart, updateCartItemMenos, updateCartItemMas, emptyCart } from '../../redux/actions/cartActions'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-export const ModalCart = ({navigation, setCartExpanded }) => {
+export const ModalCart = ({ navigation, setCartExpanded }) => {
   const dispatch = useDispatch()
   const data = useSelector((state) => state.cart.cart)
   let cartDataId = data._id
@@ -134,18 +134,21 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
     }
   }
 
-  const emptyCart = () => {
-    axios.put(apiUrl + `carts/clear/${cartDataId}`, headers)
-      .then(res => console.log('Vaciado Correctamente'))
+  const emptyAllCart = () => {
+    axios.put(apiUrl + `carts/clear/${cartDataId}`, null, headers)
+      .then(res => {
+        console.log('Vaciado Correctamente')
+        dispatch(emptyCart())
+      })
       .catch(err => console.log(err))
   }
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Image style={styles.imgCart} source={{ uri: `${item.photo}` }} />
+      <Image style={styles.imgCart} source={{ uri: `${item.product_id.photo}` }} />
       <View style={styles.itemDetails}>
         <Text>{item.product_id.name}</Text>
-        <Text style={styles.itemPrice}>Price: ${item.product_id.price}</Text>
+        <Text style={styles.itemPrice}>Price: ${parsePrice(item.product_id.price)}</Text>
       </View>
       <View style={styles.quantityContainer}>
         <TouchableOpacity style={styles.quantityButton} onPress={() => decrementQuantity(item.product_id._id)}>
@@ -160,8 +163,11 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
         <Ionicons name="trash" size={24} color="black" />
       </TouchableOpacity>
     </View>
+  )
 
-  );
+  function parsePrice(price) {
+    return Intl.NumberFormat("de-DE").format(price)
+  }
 
   return (
     <>
@@ -172,7 +178,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
         </TouchableOpacity>
         <View style={styles.container}>
           <Text style={styles.title}>Carrito de compra</Text>
-          <TouchableOpacity style={styles.addButton} onPress={emptyCart}>
+          <TouchableOpacity style={styles.addButton} onPress={emptyAllCart}>
             <Text style={styles.addButtonText}>Empty cart</Text>
           </TouchableOpacity>
           <FlatList
@@ -182,7 +188,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
             contentContainerStyle={styles.itemList}
           />
           <View style={styles.containerTotal}>
-            <Text style={styles.totalText}>Total: ${total}</Text>
+            <Text style={styles.totalText}>Total: ${parsePrice(total)}</Text>
           </View>
           <Button
             title="Go to Pay"
@@ -264,8 +270,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   imgCart: {
-    width: '20%',
-    height: '55%',
+    width: '15%',
+    height: '100%',
     resizeMode: 'cover',
   },
   quantityContainer: {
@@ -292,6 +298,7 @@ const styles = StyleSheet.create({
   },
   itemDetails: {
     flex: 1,
+    paddingLeft: 10
   },
   totalText: {
     fontSize: 18,

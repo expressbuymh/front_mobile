@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, TextInput } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, TextInput, Alert } from 'react-native'
 import Constants from 'expo-constants';
 import axios from 'axios';
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
@@ -34,19 +34,33 @@ export const SignUpForm = ({ navigation }) => {
         navigation.navigate('Home')
       })
       .catch((err) => {
-        console.log(err);
-      });
+        console.log(err)
+        showAlert(err.response.data.message)
+      })
 
+  }
+
+  const showAlert = (messages) => {
+    const alertMessage = messages.map((err) => `${err.path}: ${err.message}`).join('\n')
+    Alert.alert(
+      '¡Alert!',
+      alertMessage,
+      [
+        { text: 'Ok', onPress: () => console.log('Botón Aceptar presionado') },
+        { text: 'Cancel', onPress: () => console.log('Botón Cancelar presionado') },
+      ],
+      { cancelable: false }
+    )
   }
 
   return (
     <>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../../assets/forms.jpg')} 
           style={styles.background}
           imageStyle={styles.backgroundImage}
         >
+          <Text style={styles.textLogo}>ExBy</Text>
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
@@ -141,8 +155,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 12,
     marginBottom: 10,
-    width: 270, 
-    height: 0, 
+    width: 270,
+    height: 0,
     flex: 1,
     alignItems: 'center'
   },
@@ -157,5 +171,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     height: 50,
     borderRadius: 10,
+  },
+  textLogo: {
+    fontSize: 50,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginBottom: 40
   }
 });
