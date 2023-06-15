@@ -10,10 +10,11 @@ import { OrderDetails } from './src/page/OrderDetails'
 import { NavBar } from './src/components/NavBar'
 import { Provider } from 'react-redux'
 import store from './redux/store'
+import Toast from 'react-native-toast-message'
 
 const Stack = createStackNavigator()
 
-const App = () => {
+const App = (props) => {
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -54,6 +55,7 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+     <Toast/>
     </Provider>
   );
 };

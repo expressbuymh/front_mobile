@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants'
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
-import { useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
@@ -25,6 +25,13 @@ export const ProductsCategory = ({ route }) => {
   const [toggleButtonCart, setToggleButtonCart] = useState(false)
   const [validar, setValidar] = useState(true)
   const { isMenuExpanded, setMenuExpanded } = route.params
+
+  const showToast = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'your product was successfully added to cart',
+    });
+  }
 
   let getToken = async () => {
     try {
@@ -215,6 +222,7 @@ export const ProductsCategory = ({ route }) => {
         .then(res => {
           console.log(res)
           dispatch(updateCartItemMas(dataProduct))
+          showToast()
         })
         .catch(err => console.log(err))
     } else {
@@ -223,6 +231,7 @@ export const ProductsCategory = ({ route }) => {
         .then(res => {
           console.log(res)
           dispatch(addToCart([dataProduct]))
+          showToast()
         })
         .catch(err => console.log(err))
     }
