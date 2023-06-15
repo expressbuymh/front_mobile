@@ -4,13 +4,28 @@ import Swiper from 'react-native-swiper'
 import axios from 'axios';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants'
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
+import  Toast  from 'react-native-toast-message';
 
-export const HomeProducts = () => {
+export const HomeProducts = (props) => {
 
   console.log('Esto es Home')
-
-  const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.cart.cart)
+  let cartDataId = data._id
   const [products, setProducts] = useState()
+  const cartData = useSelector(state => state.cart.items)
+  const [headers, setHeaders] = useState()
+
+  const showToast = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'your product was successfully added to cart',
+    });
+  }
 
   useEffect(() => {
 
@@ -26,6 +41,74 @@ export const HomeProducts = () => {
     return Intl.NumberFormat("de-DE").format(price)
   }
 
+  let getToken = async () => {
+    try {
+      let token = await AsyncStorage.getItem('token')
+      return token
+    } catch (error) {
+      console.log('Error al obtener el token:', error)
+      return null
+    }
+  }
+
+  let getHeaders = async () => {
+    try {
+      let token = await getToken();
+      let headers = { headers: { 'Authorization': `Bearer ${token}` } }
+      return headers
+    } catch (error) {
+      console.log('Error al obtener las headers:', error)
+      return null
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const headers = await getHeaders()
+      setHeaders(headers)
+    }
+    fetchData()
+  }, [])
+
+  const addProductCart = (product) => {
+    let data = {
+      product_id: product._id,
+      quantity: 1
+    }
+    let dataProduct = {
+      product_id: {
+        _id: product._id,
+        name: product.name,
+        photo: product.photo,
+        price: product.price
+      },
+      quantity: 1
+    }
+
+
+    const existingProduct = cartData.find(item => item.product_id._id === product._id)
+    if (existingProduct) {
+      data.quantity = existingProduct.quantity + 1
+      dataProduct.quantity = data.quantity
+      axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log(res)
+          dispatch(updateCartItemMas(dataProduct))
+          showToast()
+        })
+        .catch(err => console.log(err))
+    } else {
+
+      axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
+        .then(res => {
+          console.log(res)
+          dispatch(addToCart([dataProduct]))
+          showToast()
+        })
+        .catch(err => console.log(err))
+    }
+  }
+
   return (
     <>
       <ScrollView style={{ backgroundColor: 'white', padding: 8 }}>
@@ -33,10 +116,10 @@ export const HomeProducts = () => {
         <View style={styles.container} >
           <Swiper autoplay>
             <View style={styles.slide}>
-              <Image style={styles.img} source={{uri: 'https://img.freepik.com/vector-premium/banner-venta-feliz-dia-padre-3d_317396-1655.jpg?w=360'}} />
+              <Image style={styles.img} source={{ uri: 'https://img.freepik.com/vector-premium/banner-venta-feliz-dia-padre-3d_317396-1655.jpg?w=360' }} />
             </View>
             <View style={styles.slide}>
-              <Image style={styles.img1} source={{uri: 'https://img.freepik.com/vector-gratis/plantilla-diseno-banner-promocional-moderno-gran-venta_1017-27327.jpg'}} />
+              <Image style={styles.img1} source={{ uri: 'https://img.freepik.com/vector-gratis/plantilla-diseno-banner-promocional-moderno-gran-venta_1017-27327.jpg' }} />
             </View>
             <View style={styles.slide}>
               <Image style={styles.img} source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/expressbuy-finalchallenge.appspot.com/o/mobileImages%2FCaptura%20de%20pantalla%202023-06-15%20135931.png?alt=media&token=dd43f808-2b8b-4e23-9bdc-302bfbbaa722' }} />
@@ -82,10 +165,10 @@ export const HomeProducts = () => {
                     <Text style={styles.text2}>{`Price: $ ${parsePrice(prod.price)}`}</Text>
                   </View>
                   <View style={{ display: 'flex', alignItems: 'center', rowGap: 8 }}>
-                    <TouchableOpacity onPress={() => { console.log('hola') }} style={{ backgroundColor: 'red', padding: 6, width: 100, borderRadius: 7, backgroundColor: '#fff', borderWidth: 1, borderColor: '#000' }} >
+                    <TouchableOpacity style={{ backgroundColor: 'red', padding: 6, width: 100, borderRadius: 7, backgroundColor: '#fff', borderWidth: 1, borderColor: '#000' }} >
                       <Text style={{ textAlign: 'center' }}>Details</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', width: 120, justifyContent: 'center', alignItems: 'center', padding: 4, borderRadius: 6, backgroundColor: '#4F46E5' }}>
+                    <TouchableOpacity onPress={() => addProductCart(prod)} style={{ display: 'flex', flexDirection: 'row', width: 120, justifyContent: 'center', alignItems: 'center', padding: 4, borderRadius: 6, backgroundColor: '#4F46E5' }}>
                       <MaterialIcons name='shopping-cart' size={20} color="white" />
                       <Text style={{ color: 'white' }}>Add to Cart</Text>
                     </TouchableOpacity>
