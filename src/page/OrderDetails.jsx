@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions, Linking } from 'react-native'
+import axios from 'axios'
+import Constants from 'expo-constants'
+const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
 export const OrderDetails = ({ route }) => {
-  console.log('OrderDetail',route.params)
+  console.log('OrderDetail', route.params)
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    // Aquí puedes realizar una llamada a la API o configurar la lógica para obtener los datos del pedido
-    // y luego actualizar la variable de estado `order` con los datos obtenidos
     const fetchOrderData = async () => {
       try {
-        // Lógica para obtener los datos del pedido utilizando route.params
         const orderData = route.params.orderData;
         setOrder(orderData);
       } catch (error) {
@@ -25,6 +25,31 @@ export const OrderDetails = ({ route }) => {
     return <Text>Loading...</Text>;
   }
 
+  const pay = () => {
+    let orderMercado = [{
+      title: 'Carlos',
+      quantity: 1,
+      unit_price: order.total_price,
+    }]
+    axios.post(apiUrl + 'paymments', orderMercado )
+      .then((res) => {
+        const initPoint = res.data.response.body.init_point
+        Linking.openURL(initPoint)
+      })
+      .catch(err => console.log(err))
+  }
+
+  //el back espera recibir el carrito de esta manera :
+  /* items: [{
+              id: 123,
+              title: carrito.title,
+              currency_id: 'ARS',
+              picture_url: carrito.picture_url,
+              description: carrito.description,
+              category_id: 'art',
+              quantity: carrito.unit_price,
+              unit_price: carrito.unit_price
+          }] */
 
   return (
     <View style={styles.container}>
@@ -49,7 +74,7 @@ export const OrderDetails = ({ route }) => {
           <Text style={styles.text}>{order.createdAt}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={pay}>
         <Text style={styles.buttonText}>Pay</Text>
       </TouchableOpacity>
     </View>
