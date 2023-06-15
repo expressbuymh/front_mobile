@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants'
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, updateCartItemMas } from '../../redux/actions/cartActions';
+import { useRoute } from '@react-navigation/native';
 
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
@@ -23,7 +24,7 @@ export const ProductsCategory = ({ route }) => {
   const [headers, setHeaders] = useState()
   const [toggleButtonCart, setToggleButtonCart] = useState(false)
   const [validar, setValidar] = useState(true)
-  const [toggleId, setToggleId] = useState()
+  const { isMenuExpanded, setMenuExpanded } = route.params
 
   let getToken = async () => {
     try {
@@ -42,7 +43,7 @@ export const ProductsCategory = ({ route }) => {
       return headers
     } catch (error) {
       console.log('Error al obtener las headers:', error)
-      return null;
+      return null
     }
   }
 
@@ -87,6 +88,7 @@ export const ProductsCategory = ({ route }) => {
           setDataProducts(res.data.products)
         })
         .catch(err => console.log(err))
+      setMenuExpanded(false)
     }, [route.params.category_id]
   )
 
@@ -109,6 +111,10 @@ export const ProductsCategory = ({ route }) => {
       .catch(err => console.log(err))
   }
 
+  function parsePrice(price) {
+    return Intl.NumberFormat("de-DE").format(price)
+  }
+
   const Card = ({ products, mostrar }) => {
     return (
       <View style={styles.card}>
@@ -119,7 +125,7 @@ export const ProductsCategory = ({ route }) => {
         {/* <ScrollView style={styles.containDescription}>
           <Text style={styles.textDescription}>{products?.description}</Text>
         </ScrollView> */}
-        <Text style={styles.textPrice}>{`$${products?.price}`}</Text>
+        <Text style={styles.textPrice}>{`$${parsePrice(products?.price)}`}</Text>
         <View style={{ flexDirection: 'column', width: '90%', alignItems: 'center', }}>
           <TouchableOpacity style={styles.buttonCardDetails} onPress={() => toggleDetails(products)}>
             <Text>Details</Text>
@@ -158,7 +164,7 @@ export const ProductsCategory = ({ route }) => {
     setFilter(false)
   }
 
-  const generateCardPairs = () => {      
+  const generateCardPairs = () => {
     const cardPairs = [];
     const dataPairs = dataProducts.length % 2 === 0 ? dataProducts : dataProducts.slice(0, dataProducts.length - 1); // Obtener un nuevo array con pares de datos
     for (let i = 0; i < dataPairs.length; i += 2) {
@@ -166,7 +172,7 @@ export const ProductsCategory = ({ route }) => {
       const card2 = dataPairs[i + 1]
       cardPairs.push(
         <View key={i} style={styles.row}>
-          <Card products={card1}  mostrar={validar}/>
+          <Card products={card1} mostrar={validar} />
           {card2 && <Card products={card2} mostrar={validar} />}
         </View>
       )
@@ -199,8 +205,8 @@ export const ProductsCategory = ({ route }) => {
       },
       quantity: 1
     }
-    
-    
+
+
     const existingProduct = cartData.find(item => item.product_id._id === product._id)
     if (existingProduct) {
       data.quantity = existingProduct.quantity + 1

@@ -20,15 +20,15 @@ export const NavBar = ({ navigation }) => {
   }
 
   const toggleMenu = () => {
-    setMenuExpanded(!isMenuExpanded);
+    setMenuExpanded(true);
   }
 
   const toggleUser = () => {
-    setUserExpanded(!isUserExpanded)
+    setUserExpanded(true)
   }
 
   const toggleCart = () => {
-    setCartExpanded(!isCartExpanded)
+    setCartExpanded(true)
   }
 
   const closeMenu = () => {
@@ -96,12 +96,15 @@ export const NavBar = ({ navigation }) => {
   )
 
   const handleMenuItemPress = (category_id, category_name) => {
-    navigation.navigate('ProductsCategory', { category_id, category_name })
-    console.log('Se hizo clic en el elemento:', category_id);
+    navigation.navigate('ProductsCategory', { category_id, category_name, isMenuExpanded, setMenuExpanded })
+    console.log('Se hizo clic en el elemento:', category_id)
   }
 
   const returnHome = () => {
     setMenuExpanded(false)
+    setUserExpanded(false)
+    setCartExpanded(false)
+    console.log('Se preciono home')
     navigation.navigate('HomeProducts')
   }
 

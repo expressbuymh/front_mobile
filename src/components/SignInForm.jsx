@@ -39,6 +39,8 @@ export const SignInForm = ({ navigation }) => {
         console.log(res.data.cart)
         dispatch(almacenarCarrito(res.data.cart))
         dispatch(addToCart(res.data.cart.products))
+        setEmail('')
+        setPassword('')
       })
       .catch(err => {
         console.log(err.response.data.message)

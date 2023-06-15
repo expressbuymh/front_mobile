@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeFromCart, updateCartItemMenos, updateCartItemMas, emptyCart } from '../../redux/actions/cartActions'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/'
 
-export const ModalCart = ({navigation, setCartExpanded }) => {
+export const ModalCart = ({ navigation, setCartExpanded }) => {
   const dispatch = useDispatch()
   const data = useSelector((state) => state.cart.cart)
   let cartDataId = data._id
@@ -135,7 +135,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
   }
 
   const emptyAllCart = () => {
-    axios.put(apiUrl + `carts/clear/${cartDataId}`, null,headers)
+    axios.put(apiUrl + `carts/clear/${cartDataId}`, null, headers)
       .then(res => {
         console.log('Vaciado Correctamente')
         dispatch(emptyCart())
@@ -148,7 +148,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
       <Image style={styles.imgCart} source={{ uri: `${item.product_id.photo}` }} />
       <View style={styles.itemDetails}>
         <Text>{item.product_id.name}</Text>
-        <Text style={styles.itemPrice}>Price: ${item.product_id.price}</Text>
+        <Text style={styles.itemPrice}>Price: ${parsePrice(item.product_id.price)}</Text>
       </View>
       <View style={styles.quantityContainer}>
         <TouchableOpacity style={styles.quantityButton} onPress={() => decrementQuantity(item.product_id._id)}>
@@ -163,8 +163,11 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
         <Ionicons name="trash" size={24} color="black" />
       </TouchableOpacity>
     </View>
+  )
 
-  );
+  function parsePrice(price) {
+    return Intl.NumberFormat("de-DE").format(price)
+  }
 
   return (
     <>
@@ -185,7 +188,7 @@ export const ModalCart = ({navigation, setCartExpanded }) => {
             contentContainerStyle={styles.itemList}
           />
           <View style={styles.containerTotal}>
-            <Text style={styles.totalText}>Total: ${total}</Text>
+            <Text style={styles.totalText}>Total: ${parsePrice(total)}</Text>
           </View>
           <Button
             title="Go to Pay"
