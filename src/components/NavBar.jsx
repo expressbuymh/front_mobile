@@ -15,6 +15,12 @@ export const NavBar = ({ navigation }) => {
   const [isUserExpanded, setUserExpanded] = useState(false)
   const [isCartExpanded, setCartExpanded] = useState(false)
   const [categories, setCategories] = useState()
+ 
+
+  const goProfile = () => {
+    navigation.navigate('Profile') 
+  }
+
   const goHome = () => {
     navigation.navigate('Home')
   }
@@ -174,29 +180,29 @@ export const NavBar = ({ navigation }) => {
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
           <View style={styles.menuUser}>
-            <TouchableOpacity style={styles.item} onPress={signOut}>
-              <View style={{ flexDirection: 'row', marginBottom: 3 }}>
+            <TouchableOpacity style={styles.item} onPress={goProfile}>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
                 <AntDesign name="user" size={24} color="black" />
                 <Text style={styles.itemText}>Profile</Text>
               </View>
               <View style={styles.itemSeparator} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => {
-              Alert.alert('LogOut', 'Are you sure?', [
-                {
-                  text: 'Yes',
-                  onPress: () => {
-                    console.log('Yes pressed')
-                    goHome()
-                  }
-                },
-                {
-                  text: 'Cancel',
-                  onPress: () => { console.log('Cancel pressed') }
-                }
-              ])
-            }}>
-              <Entypo name="log-out" size={24} color="black" />
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={()=> { Alert.alert('LogOut', 'Are you sure?', [
+              {
+                text: 'Yes',
+                onPress: () => {
+                  console.log('Yes pressed')
+                  // Cambié donde se ejecuta la accione de logout para que sea cual del user presione "yes"
+                  signOut()
+                  goHome()
+              }
+              },
+              {
+                text: 'Cancel',
+                onPress: () => {console.log('Cancel pressed')}
+              }
+            ]) }}>
+              <Entypo name="log-out" size={24} color="black"/>
               <Text style={styles.itemText}>Sign Out</Text>
             </TouchableOpacity>
           </View>

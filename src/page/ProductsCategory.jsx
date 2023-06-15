@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   },
   imgCard: {
     flex: 1,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   buttonCardDetails: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',

@@ -9,6 +9,8 @@ import AddressForm from './src/page/AddressForm'
 import { OrderDetails } from './src/page/OrderDetails'
 import { NavBar } from './src/components/NavBar'
 import { Provider } from 'react-redux'
+import UserProfile  from './src/page/UserProfile'
+import ChangeAddressForm from './src/components/ChangeAddressForm'
 import store from './redux/store'
 import Toast from 'react-native-toast-message'
 
@@ -22,6 +24,7 @@ const App = (props) => {
           screenOptions={{
             header: (props) => <NavBar {...props} navigation={props.navigation} />,
           }}
+          initialRouteName='Home'
         >
           <Stack.Screen
             name="Home"
@@ -48,9 +51,14 @@ const App = (props) => {
             component={AddressForm}
             options={{ header: undefined }}
           />
-          <Stack.Screen
-            name="OrderDetails"
-            component={OrderDetails}
+          <Stack.Screen 
+            name='Profile'
+            component={UserProfile}
+            options={{ header: undefined }}
+          />
+          <Stack.Screen 
+            name='Edit address'
+            component={ChangeAddressForm}
             options={{ header: undefined }}
           />
         </Stack.Navigator>
