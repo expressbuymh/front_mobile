@@ -112,7 +112,7 @@ export const NavBar = ({ navigation }) => {
           <TouchableOpacity onPress={toggleMenu} style={styles.button}>
             <Ionicons name='menu' size={24} color="white" />
           </TouchableOpacity>
-          <Image style={styles.logo} source={require('../../assets/favicon.png')} />
+          <Text style={styles.textLogo}>ExBy</Text>
         </View>
         <View style={styles.menuLogo}>
           <TouchableOpacity onPress={toggleUser} style={styles.button2}>
@@ -318,4 +318,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  textLogo: {
+    fontSize: 30,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginLeft: 10
+  }
 })

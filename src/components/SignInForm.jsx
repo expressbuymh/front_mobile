@@ -64,7 +64,8 @@ export const SignInForm = ({ navigation }) => {
 
     <View style={styles.container}>
       <View style={styles.containLogo}>
-        <Image source={require('../../assets/favicon.png')} />
+        <Text style={styles.logoText}>ExBy</Text>
+        {/* <Image source={require('../../assets/favicon.png')} /> */}
         <Text style={styles.textLogo}> Sing in to your account </Text>
       </View>
       <View style={styles.inputContainer}>
@@ -149,5 +150,11 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontSize: 25,
     paddingVertical: 15
+  },
+  logoText: {
+    fontSize: 40,
+    color: '#4F46E5',
+    fontWeight: 'bold',
+    marginLeft: 10
   }
 });
