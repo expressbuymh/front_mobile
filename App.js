@@ -51,6 +51,11 @@ const App = (props) => {
             component={AddressForm}
             options={{ header: undefined }}
           />
+          <Stack.Screen
+            name="OrderDetails"
+            component={OrderDetails}
+            options={{ header: undefined }}
+          />
           <Stack.Screen 
             name='Profile'
             component={UserProfile}
