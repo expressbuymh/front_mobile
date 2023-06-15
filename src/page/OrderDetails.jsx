@@ -25,13 +25,17 @@ export const OrderDetails = ({ route }) => {
     return <Text>Loading...</Text>;
   }
 
+  function parsePrice(price) {
+    return Intl.NumberFormat("de-DE").format(price)
+  }
+
   const pay = () => {
     let orderMercado = [{
       title: 'Carlos',
       quantity: 1,
       unit_price: order.total_price,
     }]
-    axios.post(apiUrl + 'paymments', orderMercado )
+    axios.post(apiUrl + 'paymments', orderMercado)
       .then((res) => {
         const initPoint = res.data.response.body.init_point
         Linking.openURL(initPoint)
@@ -63,7 +67,7 @@ export const OrderDetails = ({ route }) => {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Total Price:</Text>
-          <Text style={styles.text}>{order.total_price}</Text>
+          <Text style={styles.text}>{parsePrice(order.total_price)}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Status:</Text>
