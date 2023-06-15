@@ -18,6 +18,9 @@ export const NavBar = ({ navigation }) => {
  
 
   const goProfile = () => {
+    setMenuExpanded(false)
+    setUserExpanded(false)
+    setCartExpanded(false)
     navigation.navigate('Profile') 
   }
 

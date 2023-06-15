@@ -92,20 +92,20 @@ export const HomeProducts = (props) => {
       dataProduct.quantity = data.quantity
       axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
         .then(res => {
-          console.log(res)
+          console.log('producto guardado')
           dispatch(updateCartItemMas(dataProduct))
           showToast()
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err.responce.data))
     } else {
 
       axios.post(apiUrl + `carts/addproducts/${cartDataId}`, data, headers)
         .then(res => {
-          console.log(res)
+          console.log('producto guardado')
           dispatch(addToCart([dataProduct]))
           showToast()
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err.responce.data))
     }
   }
 
