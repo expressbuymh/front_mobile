@@ -4,7 +4,7 @@ import axios from 'axios'
 import Constants from 'expo-constants'
 const apiUrl = Constants.manifest.extra.apiUrl || 'http://localhost:8000/';
 
-export const OrderDetails = ({ route }) => {
+export const OrderDetails = ({navigation, route }) => {
   console.log('OrderDetail', route.params)
   const [order, setOrder] = useState(null);
 
@@ -30,12 +30,20 @@ export const OrderDetails = ({ route }) => {
   }
 
   const pay = () => {
+    let orderPay = {
+      order_id: order._id,
+      id: 1,
+      title: `#${order.n_order}`,
+      quantity: 1,
+      unit_price: order.total_price
+    }
+
     let orderMercado = [{
       title: 'Carlos',
       quantity: 1,
       unit_price: order.total_price,
     }]
-    axios.post(apiUrl + 'paymments', orderMercado)
+    axios.post(apiUrl + 'paymments', orderPay)
       .then((res) => {
         const initPoint = res.data.response.body.init_point
         Linking.openURL(initPoint)
